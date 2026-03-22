@@ -76,22 +76,34 @@ function migrateRules(): void {
 function migrateRulePatterns(): void {
   if (!db) return
 
-  const patternMap: Record<string, string> = {
-    rechnung: 'rechnungsnummer, rechnung nr, invoice, rechnungsdatum, gesamtbetrag, mehrwertsteuer, mwst, ust, zahlungsziel, steuernummer',
-    vertrag: 'vertragsnummer, vertrag nr, contract, vertragspartner, kündigungsfrist, kündigung, laufzeit, vertragsdauer, mietvertrag, arbeitsvertrag, kaufvertrag',
-    lohnabrechnung: 'lohnabrechnung, gehaltsabrechnung, entgeltabrechnung, bruttolohn, nettolohn, steuerklasse, lohnsteuer, sozialversicherung, personalnummer',
-    kontoauszug: 'kontoauszug, account statement, kontostand, saldo, buchungstag, wertstellung, haben, soll',
-    quittung: 'quittung, receipt, kassenbon, kassenzettel, bar erhalten, bezahlt',
-    bescheinigung: 'bescheinigung, bestätigung, certificate, attestation, hiermit bestätigt, nachweis',
-    brief: 'sehr geehrte, dear sir, dear madam, mit freundlichen grüßen, with kind regards, betreff, anlage',
+  // Map: document_type → [new pattern, new rule_type, new min_matches]
+  const patternMap: Record<string, [string, string, number]> = {
+    rechnung: ['invoice number, invoice no, invoice date, total amount, subtotal, vat, tax, due date, payment terms, bank details, iban', 'simple', 2],
+    vertrag: ['contract number, contract no, agreement, parties, termination, notice period, duration, term, lease, employment contract', 'simple', 2],
+    lohnabrechnung: ['payslip, salary statement, gross pay, net pay, tax class, income tax, social security, health insurance, pension, employee number', 'simple', 2],
+    kontoauszug: ['(account\\s*statement|bank\\s*statement|balance|iban\\s*:?\\s*[a-z]{2}\\d{2}).*(debit|credit|opening|closing)', 'regex', 1],
+    quittung: ['receipt, cash received, paid, total, amount due, change, cashier, transaction', 'simple', 2],
+    bescheinigung: ['certificate, confirmation, attestation, hereby certify, hereby confirm, proof, issued by', 'simple', 2],
+    brief: ['dear sir, dear madam, dear mr, dear ms, sincerely, kind regards, best regards, to whom it may concern, subject, enclosure', 'simple', 2],
   }
 
-  const update = db.prepare(
-    "UPDATE rules SET pattern = ? WHERE document_type = ? AND (pattern = '' OR pattern IS NULL)",
-  )
+  // Old German patterns to detect unmigrated rules
+  const germanMarkers = ['rechnungsnummer', 'vertragsnummer', 'lohnabrechnung', 'kontoauszug', 'quittung, receipt, kassenbon', 'bescheinigung, bestätigung', 'sehr geehrte']
 
-  for (const [docType, pattern] of Object.entries(patternMap)) {
-    update.run(pattern, docType)
+  const rows = db.prepare('SELECT id, document_type, pattern FROM rules').all() as { id: number; document_type: string; pattern: string }[]
+
+  const update = db.prepare('UPDATE rules SET pattern = ?, rule_type = ?, min_matches = ? WHERE id = ?')
+
+  for (const row of rows) {
+    const mapping = patternMap[row.document_type]
+    if (!mapping) continue
+
+    const isEmpty = !row.pattern || row.pattern.trim() === ''
+    const isGerman = germanMarkers.some((m) => row.pattern.includes(m))
+
+    if (isEmpty || isGerman) {
+      update.run(mapping[0], mapping[1], mapping[2], row.id)
+    }
   }
 }
 
@@ -128,19 +140,19 @@ function seedDefaultRules(): void {
 
   const defaults: [string, string, string, string, string, number][] = [
     ['rechnung', 'Finance/Invoices/{YYYY}/', 'Invoice_{Sender}_{Date}', 'simple',
-      'rechnungsnummer, rechnung nr, invoice, rechnungsdatum, gesamtbetrag, mehrwertsteuer, mwst, ust, zahlungsziel, steuernummer', 2],
+      'invoice number, invoice no, invoice date, total amount, subtotal, vat, tax, due date, payment terms, bank details, iban', 2],
     ['vertrag', 'Contracts/', 'Contract_{Sender}_{Date}', 'simple',
-      'vertragsnummer, vertrag nr, contract, vertragspartner, kündigungsfrist, kündigung, laufzeit, vertragsdauer, mietvertrag, arbeitsvertrag, kaufvertrag', 2],
+      'contract number, contract no, agreement, parties, termination, notice period, duration, term, lease, employment contract', 2],
     ['lohnabrechnung', 'Finance/Payslips/{YYYY}/', 'Payslip_{Date}', 'simple',
-      'lohnabrechnung, gehaltsabrechnung, entgeltabrechnung, bruttolohn, nettolohn, steuerklasse, lohnsteuer, sozialversicherung, personalnummer', 2],
-    ['kontoauszug', 'Finance/Statements/{YYYY}/', 'Statement_{Sender}_{Date}', 'simple',
-      'kontoauszug, account statement, kontostand, saldo, buchungstag, wertstellung, haben, soll', 2],
+      'payslip, salary statement, gross pay, net pay, tax class, income tax, social security, health insurance, pension, employee number', 2],
+    ['kontoauszug', 'Finance/Statements/{YYYY}/', 'Statement_{Sender}_{Date}', 'regex',
+      '(account\\s*statement|bank\\s*statement|balance|iban\\s*:?\\s*[a-z]{2}\\d{2}).*(debit|credit|opening|closing)', 1],
     ['quittung', 'Finance/Receipts/{YYYY}/', 'Receipt_{Sender}_{Date}', 'simple',
-      'quittung, receipt, kassenbon, kassenzettel, bar erhalten, bezahlt', 2],
+      'receipt, cash received, paid, total, amount due, change, cashier, transaction', 2],
     ['bescheinigung', 'Documents/Certificates/', 'Certificate_{Sender}_{Date}', 'simple',
-      'bescheinigung, bestätigung, certificate, attestation, hiermit bestätigt, nachweis', 2],
+      'certificate, confirmation, attestation, hereby certify, hereby confirm, proof, issued by', 2],
     ['brief', 'Documents/Letters/{YYYY}/', 'Letter_{Sender}_{Date}', 'simple',
-      'sehr geehrte, dear sir, dear madam, mit freundlichen grüßen, with kind regards, betreff, anlage', 2],
+      'dear sir, dear madam, dear mr, dear ms, sincerely, kind regards, best regards, to whom it may concern, subject, enclosure', 2],
   ]
 
   const insertMany = db.transaction((rows: typeof defaults) => {
