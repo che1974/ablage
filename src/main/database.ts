@@ -54,6 +54,7 @@ export function initDatabase(): void {
   `)
 
   migrateRules()
+  migrateRulePatterns()
   migrateRuleTemplates()
   seedDefaultRules()
 }
@@ -69,6 +70,28 @@ function migrateRules(): void {
       ALTER TABLE rules ADD COLUMN pattern TEXT NOT NULL DEFAULT '';
       ALTER TABLE rules ADD COLUMN min_matches INTEGER NOT NULL DEFAULT 2;
     `)
+  }
+}
+
+function migrateRulePatterns(): void {
+  if (!db) return
+
+  const patternMap: Record<string, string> = {
+    rechnung: 'rechnungsnummer, rechnung nr, invoice, rechnungsdatum, gesamtbetrag, mehrwertsteuer, mwst, ust, zahlungsziel, steuernummer',
+    vertrag: 'vertragsnummer, vertrag nr, contract, vertragspartner, kündigungsfrist, kündigung, laufzeit, vertragsdauer, mietvertrag, arbeitsvertrag, kaufvertrag',
+    lohnabrechnung: 'lohnabrechnung, gehaltsabrechnung, entgeltabrechnung, bruttolohn, nettolohn, steuerklasse, lohnsteuer, sozialversicherung, personalnummer',
+    kontoauszug: 'kontoauszug, account statement, kontostand, saldo, buchungstag, wertstellung, haben, soll',
+    quittung: 'quittung, receipt, kassenbon, kassenzettel, bar erhalten, bezahlt',
+    bescheinigung: 'bescheinigung, bestätigung, certificate, attestation, hiermit bestätigt, nachweis',
+    brief: 'sehr geehrte, dear sir, dear madam, mit freundlichen grüßen, with kind regards, betreff, anlage',
+  }
+
+  const update = db.prepare(
+    "UPDATE rules SET pattern = ? WHERE document_type = ? AND (pattern = '' OR pattern IS NULL)",
+  )
+
+  for (const [docType, pattern] of Object.entries(patternMap)) {
+    update.run(pattern, docType)
   }
 }
 
