@@ -101,7 +101,11 @@ function sanitizeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_').trim()
 }
 
-function buildSuggestedName(template: string, fields: ExtractedFields, ext: string): string {
+function buildSuggestedName(template: string, fields: ExtractedFields, ext: string, originalFilename?: string): string {
+  if (!template || template.trim() === '') {
+    return originalFilename || `file${ext}`
+  }
+
   let name = template
 
   if (fields.sender) {
@@ -212,7 +216,7 @@ export function classify(
       type,
       confidence: 0.95,
       fields,
-      suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext),
+      suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext, filename),
       suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
     }
   }
@@ -256,7 +260,7 @@ export function classify(
         type,
         confidence,
         fields,
-        suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext),
+        suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext, filename),
         suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
       }
     }

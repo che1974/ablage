@@ -40,7 +40,7 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
   const canNext = () => {
     if (step === 1) return true
     if (step === 2) return pattern.trim().length > 0
-    if (step === 3) return folder.trim().length > 0 && nameTemplate.trim().length > 0
+    if (step === 3) return folder.trim().length > 0
     return true
   }
 
@@ -233,7 +233,7 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                 </div>
                 <div className="wizard-review-row">
                   <span className="wizard-review-label">{t('rules.name')}</span>
-                  <span>{nameTemplate}.&#123;ext&#125;</span>
+                  <span>{nameTemplate ? `${nameTemplate}.{ext}` : t('rules.keepOriginal')}</span>
                 </div>
               </div>
             </>

@@ -51,6 +51,7 @@
     "conflictWarning": "Warning: this rule overlaps with \"{name}\" — same extensions or similar pattern. Both rules are active.",
     "minMatches": "Min. matches:",
     "docType": "Document type:",
+    "keepOriginal": "Keep original filename",
     "confirmDelete": "Delete this rule?",
     "wizard": {
       "title": "New Rule",
@@ -68,7 +69,7 @@
       "step3title": "Where to put it?",
       "step3hint": "Set the destination folder and filename pattern. Use {YYYY} in the folder path for automatic year-based sorting.",
       "step3folderHint": "Folder path. Use {YYYY} for year substitution. Example: Finance/Invoices/{YYYY}/",
-      "step3nameHint": "Filename template. Available placeholders: {Sender}, {Date}. Example: Invoice_{Sender}_{Date}",
+      "step3nameHint": "Optional. Leave empty to keep the original filename. Available placeholders: {Sender}, {Date}. Example: Invoice_{Sender}_{Date}",
       "step4title": "Review",
       "step4hint": "Check the rule settings before creating. You can always edit or disable it later."
     }

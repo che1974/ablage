@@ -221,7 +221,9 @@ export default function RuleEditor({ onOpenWizard }: Props) {
                     </div>
                     <div>
                       <p className="rule-field-label">{t('rules.name')}</p>
-                      <p className="rule-field-mono">{rule.nameTemplate}.&#123;ext&#125;</p>
+                      <p className={rule.nameTemplate ? 'rule-field-mono' : 'rule-field-value'}>
+                        {rule.nameTemplate ? `${rule.nameTemplate}.{ext}` : t('rules.keepOriginal')}
+                      </p>
                     </div>
                   </div>
                   <div className="rule-actions">
