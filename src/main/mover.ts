@@ -1,5 +1,5 @@
-import { rename, mkdir, access, stat } from 'fs/promises'
-import { join, dirname, basename, extname } from 'path'
+import { rename, mkdir, access } from 'fs/promises'
+import { join, dirname, basename, extname, relative } from 'path'
 import { addHistory, updateHistoryStatus, getHistoryEntry } from './database'
 import type { MoveSuggestion } from '../shared/types'
 
@@ -30,7 +30,15 @@ async function resolveConflict(targetPath: string): Promise<string> {
 }
 
 export async function moveFile(suggestion: MoveSuggestion, baseDir: string): Promise<number> {
-  const targetDir = join(baseDir, suggestion.suggestedPath)
+  let targetDir = join(baseDir, suggestion.suggestedPath)
+
+  if (suggestion.keepSubfolders && suggestion.watchedFolder) {
+    const relDir = dirname(relative(suggestion.watchedFolder, suggestion.originalPath))
+    if (relDir && relDir !== '.') {
+      targetDir = join(targetDir, relDir)
+    }
+  }
+
   await mkdir(targetDir, { recursive: true })
 
   const targetPath = await resolveConflict(join(targetDir, suggestion.suggestedName))

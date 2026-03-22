@@ -24,6 +24,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
   const [editPattern, setEditPattern] = useState('')
   const [editRuleType, setEditRuleType] = useState<RuleType>('simple')
   const [editMinMatches, setEditMinMatches] = useState(2)
+  const [editKeepSubfolders, setEditKeepSubfolders] = useState(false)
 
   const load = () => window.ablage.getRules().then(setRules)
   useEffect(() => { load() }, [])
@@ -36,6 +37,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
     setEditPattern(rule.pattern)
     setEditRuleType(rule.ruleType)
     setEditMinMatches(rule.minMatches)
+    setEditKeepSubfolders(rule.keepSubfolders)
   }
 
   const cancel = () => setEditingId(null)
@@ -49,6 +51,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
       pattern: editPattern,
       ruleType: editRuleType,
       minMatches: editMinMatches,
+      keepSubfolders: editKeepSubfolders,
     })
     cancel()
     load()
@@ -179,6 +182,14 @@ export default function RuleEditor({ onOpenWizard }: Props) {
                         />
                       </div>
                     </div>
+                    <label className="wizard-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={editKeepSubfolders}
+                        onChange={(e) => setEditKeepSubfolders(e.target.checked)}
+                      />
+                      <span className="wizard-checkbox-label">{t('rules.keepSubfolders')}</span>
+                    </label>
                     <div className="rule-edit-actions">
                       <button className="btn btn-secondary" onClick={cancel}>
                         {t('rules.cancel')}

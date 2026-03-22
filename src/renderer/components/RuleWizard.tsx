@@ -27,6 +27,7 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
   const [minMatches, setMinMatches] = useState(2)
   const [folder, setFolder] = useState('')
   const [nameTemplate, setNameTemplate] = useState('')
+  const [keepSubfolders, setKeepSubfolders] = useState(false)
   const [conflicts, setConflicts] = useState<string[]>([])
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
       minMatches: ruleType === 'simple' ? minMatches : 1,
       targetFolder: folder,
       nameTemplate,
+      keepSubfolders,
       isActive: true,
     })
     onCreated()
@@ -196,6 +198,18 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                 />
                 <p className="wizard-field-hint">{t('rules.wizard.step3nameHint')}</p>
               </div>
+
+              <label className="wizard-checkbox">
+                <input
+                  type="checkbox"
+                  checked={keepSubfolders}
+                  onChange={(e) => setKeepSubfolders(e.target.checked)}
+                />
+                <div>
+                  <span className="wizard-checkbox-label">{t('rules.keepSubfolders')}</span>
+                  <p className="wizard-field-hint">{t('rules.keepSubfoldersHint')}</p>
+                </div>
+              </label>
             </>
           )}
 
@@ -235,6 +249,12 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                   <span className="wizard-review-label">{t('rules.name')}</span>
                   <span>{nameTemplate ? `${nameTemplate}.{ext}` : t('rules.keepOriginal')}</span>
                 </div>
+                {keepSubfolders && (
+                  <div className="wizard-review-row">
+                    <span className="wizard-review-label">{t('rules.keepSubfolders')}</span>
+                    <span>Yes</span>
+                  </div>
+                )}
               </div>
             </>
           )}

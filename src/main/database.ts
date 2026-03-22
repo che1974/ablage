@@ -23,6 +23,7 @@ export function initDatabase(): void {
       rule_type TEXT NOT NULL DEFAULT 'simple',
       pattern TEXT NOT NULL DEFAULT '',
       min_matches INTEGER NOT NULL DEFAULT 2,
+      keep_subfolders INTEGER DEFAULT 0,
       is_active INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -71,6 +72,10 @@ function migrateRules(): void {
       ALTER TABLE rules ADD COLUMN pattern TEXT NOT NULL DEFAULT '';
       ALTER TABLE rules ADD COLUMN min_matches INTEGER NOT NULL DEFAULT 2;
     `)
+  }
+
+  if (!colNames.includes('keep_subfolders')) {
+    db.exec("ALTER TABLE rules ADD COLUMN keep_subfolders INTEGER DEFAULT 0")
   }
 }
 
@@ -244,6 +249,7 @@ function mapRule(r: any): Rule {
     ruleType: r.rule_type || 'simple',
     pattern: r.pattern || '',
     minMatches: r.min_matches ?? 2,
+    keepSubfolders: r.keep_subfolders === 1,
     isActive: r.is_active === 1,
   }
 }
@@ -266,6 +272,7 @@ export function updateRule(id: number, update: Partial<Omit<Rule, 'id'>>): void 
   if (update.pattern !== undefined) { sets.push('pattern = ?'); values.push(update.pattern) }
   if (update.minMatches !== undefined) { sets.push('min_matches = ?'); values.push(update.minMatches) }
   if (update.documentType !== undefined) { sets.push('document_type = ?'); values.push(update.documentType) }
+  if (update.keepSubfolders !== undefined) { sets.push('keep_subfolders = ?'); values.push(update.keepSubfolders ? 1 : 0) }
 
   if (sets.length === 0) return
 
@@ -281,7 +288,7 @@ export function toggleRule(id: number, isActive: boolean): void {
 export function addRule(rule: Omit<Rule, 'id'>): number {
   if (!db) return -1
   const result = db.prepare(
-    'INSERT INTO rules (document_type, target_folder, name_template, rule_type, pattern, min_matches, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO rules (document_type, target_folder, name_template, rule_type, pattern, min_matches, keep_subfolders, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
   ).run(
     rule.documentType,
     rule.targetFolder,
@@ -289,6 +296,7 @@ export function addRule(rule: Omit<Rule, 'id'>): number {
     rule.ruleType,
     rule.pattern,
     rule.minMatches,
+    rule.keepSubfolders ? 1 : 0,
     rule.isActive ? 1 : 0,
   )
   return Number(result.lastInsertRowid)

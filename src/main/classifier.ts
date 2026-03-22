@@ -192,6 +192,7 @@ function classifyByFilename(filename: string): ClassificationResult {
     fields: { date: extractDate('', name) },
     suggestedName: filename,
     suggestedFolder: folder,
+    keepSubfolders: false,
   }
 }
 
@@ -218,6 +219,7 @@ export function classify(
       fields,
       suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext, filename),
       suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
+      keepSubfolders: rule.keepSubfolders,
     }
   }
 
@@ -262,6 +264,7 @@ export function classify(
         fields,
         suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext, filename),
         suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
+        keepSubfolders: rule.keepSubfolders,
       }
     }
   }
@@ -276,5 +279,6 @@ export function classify(
     fields: extractFields(text, basename(filename, ext), 'sonstiges'),
     suggestedName: filename,
     suggestedFolder: 'Documents/Other/',
+    keepSubfolders: false,
   }
 }

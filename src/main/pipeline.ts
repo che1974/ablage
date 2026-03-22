@@ -33,6 +33,8 @@ export async function processFile(event: FileEvent): Promise<void> {
     documentType: classification.type,
     confidence: classification.confidence,
     fields: classification.fields,
+    keepSubfolders: classification.keepSubfolders,
+    watchedFolder: event.watchedFolder,
   }
 
   showSuggestionNotification(suggestion, mainWindow)

@@ -29,6 +29,7 @@ export interface ClassificationResult {
   fields: ExtractedFields
   suggestedName: string
   suggestedFolder: string
+  keepSubfolders: boolean
 }
 
 export interface ExtractionResult {
@@ -46,6 +47,7 @@ export interface FileEvent {
   extension: string
   size: number
   createdAt: Date
+  watchedFolder?: string
 }
 
 export interface MoveSuggestion {
@@ -55,6 +57,8 @@ export interface MoveSuggestion {
   documentType: DocumentType
   confidence: number
   fields: ExtractedFields
+  keepSubfolders: boolean
+  watchedFolder?: string
 }
 
 export interface WatcherConfig {
@@ -87,6 +91,7 @@ export interface Rule {
   ruleType: RuleType
   pattern: string
   minMatches: number
+  keepSubfolders: boolean
   isActive: boolean
 }
 

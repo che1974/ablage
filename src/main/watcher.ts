@@ -28,15 +28,17 @@ function shouldProcess(filePath: string, _config: WatcherConfig): boolean {
   return true
 }
 
-async function handleNewFile(filePath: string): Promise<void> {
+async function handleNewFile(filePath: string, watchedFolders: string[]): Promise<void> {
   try {
     const stats = await stat(filePath)
+    const watchedFolder = watchedFolders.find((f) => filePath.startsWith(f))
     const event: FileEvent = {
       path: filePath,
       filename: basename(filePath),
       extension: extname(filePath).toLowerCase(),
       size: stats.size,
       createdAt: stats.birthtime,
+      watchedFolder,
     }
 
     const sizeKB = Math.round(stats.size / 1024)
@@ -64,7 +66,6 @@ export function startWatching(config: Partial<WatcherConfig> = {}): void {
 
   watcher = watch(cfg.folders, {
     ignoreInitial: true,
-    depth: 0,
     ignored: [
       /(^|[\/\\])\./,  // dotfiles
       ...cfg.ignorePatterns.map((p) => p.replace('*', '**/*')),
@@ -85,7 +86,7 @@ export function startWatching(config: Partial<WatcherConfig> = {}): void {
 
     const timer = setTimeout(() => {
       debounceTimers.delete(filePath)
-      handleNewFile(filePath)
+      handleNewFile(filePath, cfg.folders)
     }, 500)
 
     debounceTimers.set(filePath, timer)
