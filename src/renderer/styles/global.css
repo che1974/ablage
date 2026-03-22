@@ -621,6 +621,20 @@ body {
   margin-top: 4px;
 }
 
+/* ========== Sticky bottom bar ========== */
+
+.sticky-bottom-bar {
+  position: sticky;
+  bottom: 0;
+  padding: 16px 0;
+  background: linear-gradient(transparent, #f5f5f7 30%);
+  pointer-events: none;
+}
+
+.sticky-bottom-bar .btn {
+  pointer-events: auto;
+}
+
 /* ========== Rule Wizard ========== */
 
 .wizard-card {
