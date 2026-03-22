@@ -251,11 +251,9 @@ export default function RuleEditor({ onOpenWizard }: Props) {
       </section>
 
       {editingId === null && (
-        <div className="sticky-bottom-bar">
-          <button className="btn btn-primary" onClick={onOpenWizard}>
-            {t('rules.addRule')}
-          </button>
-        </div>
+        <button className="btn btn-secondary" onClick={onOpenWizard} style={{ marginTop: 16 }}>
+          {t('rules.addRule')}
+        </button>
       )}
     </div>
   )
