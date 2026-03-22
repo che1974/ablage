@@ -1,19 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import NotificationPanel from './components/Notification'
 import WatchFolders from './components/Settings'
 import RuleEditor from './components/RuleEditor'
 import History from './components/History'
+import { useI18n } from './hooks/useI18n'
+import { setLocale, type Locale } from '../shared/i18n'
 
 type Tab = 'folders' | 'rules' | 'history' | 'about'
 
 export default function App() {
+  const { t } = useI18n()
   const [activeTab, setActiveTab] = useState<Tab>('folders')
+
+  useEffect(() => {
+    window.ablage.getSetting('language').then((lang) => {
+      if (lang) setLocale(lang as Locale)
+    })
+  }, [])
 
   return (
     <div className="app">
       <NotificationPanel />
       <header className="app-header">
-        <h1>Ablage</h1>
+        <h1>{t('app.name')}</h1>
         <nav className="tabs">
           {(['folders', 'rules', 'history', 'about'] as Tab[]).map((tab) => (
             <button
@@ -21,7 +30,7 @@ export default function App() {
               className={`tab ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tabLabels[tab]}
+              {t(`tabs.${tab}`)}
             </button>
           ))}
         </nav>
@@ -32,22 +41,15 @@ export default function App() {
         {activeTab === 'history' && <History />}
         {activeTab === 'about' && (
           <div className="about-panel">
-            <h2>Ablage</h2>
-            <p>Version 0.1.0</p>
-            <p>Intelligente Dokumentenorganisation für den deutschen Markt.</p>
+            <h2>{t('app.name')}</h2>
+            <p>{t('app.version')}</p>
+            <p>{t('app.description')}</p>
             <p className="settings-hint">
-              Unterstützte Formate: PDF, DOCX, JPG, PNG
+              {t('folders.supported')} {t('folders.supportedFormats')}
             </p>
           </div>
         )}
       </main>
     </div>
   )
-}
-
-const tabLabels: Record<Tab, string> = {
-  folders: 'Ordner',
-  rules: 'Regeln',
-  history: 'Verlauf',
-  about: 'Info',
 }

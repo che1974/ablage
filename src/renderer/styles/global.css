@@ -187,6 +187,35 @@ body {
   color: #dc2626;
 }
 
+/* Language selector */
+
+.language-select {
+  display: flex;
+  gap: 4px;
+}
+
+.lang-btn {
+  padding: 6px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #444;
+  transition: all 0.15s;
+}
+
+.lang-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.lang-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
 /* Settings panels */
 
 .settings-panel {

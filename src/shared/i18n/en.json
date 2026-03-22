@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "Ablage",
+    "version": "Version 0.1.0",
+    "description": "Intelligent document organization"
+  },
+  "tabs": {
+    "folders": "Folders",
+    "rules": "Rules",
+    "history": "History",
+    "about": "About"
+  },
+  "folders": {
+    "baseDir": "Target folder",
+    "baseDirHint": "Organized files will be moved here.",
+    "notSet": "Not set",
+    "choose": "Choose...",
+    "title": "Watched folders",
+    "hint": "New files in these folders are automatically analyzed.",
+    "empty": "No folders configured",
+    "add": "+ Add folder",
+    "supported": "Supported:",
+    "ignored": "Ignored:",
+    "supportedFormats": "PDF, DOCX, JPG, PNG",
+    "ignoredFormats": ".tmp, .part, hidden files"
+  },
+  "rules": {
+    "title": "Rules",
+    "hint": "Mapping of document types to target folders and filenames.",
+    "empty": "No rules available",
+    "folder": "Folder:",
+    "name": "Name:",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No actions performed yet",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "skipped": "Skipped",
+    "undo": "Undo"
+  },
+  "notification": {
+    "detected": "{type} detected",
+    "file": "File:",
+    "accept": "Apply",
+    "skip": "Skip",
+    "confidence": "{value}%"
+  },
+  "docTypes": {
+    "rechnung": "Invoice",
+    "vertrag": "Contract",
+    "lohnabrechnung": "Payslip",
+    "kontoauszug": "Bank statement",
+    "quittung": "Receipt",
+    "bescheinigung": "Certificate",
+    "brief": "Letter",
+    "sonstiges": "Other",
+    "document": "Document"
+  },
+  "tray": {
+    "watching": "Watching: {count} folders",
+    "noFolders": "No folders",
+    "todayCount": "Today: {count} files organized",
+    "settings": "Settings...",
+    "pause": "Pause watching",
+    "resume": "Resume watching",
+    "quit": "Quit"
+  },
+  "settings": {
+    "language": "Language",
+    "languageHint": "Application interface language."
+  }
+}

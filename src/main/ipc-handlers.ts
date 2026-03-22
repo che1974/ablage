@@ -4,6 +4,7 @@ import * as db from './database'
 import { acceptSuggestion, skipSuggestionHandler, undoOperation } from './pipeline'
 import { rebuildMenu } from './tray'
 import { getPendingQueue } from './notifications'
+import { setLocale, t, type Locale } from '../shared/i18n'
 import type { MoveSuggestion } from '../shared/types'
 
 export function registerIpcHandlers(): void {
@@ -60,12 +61,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle('set-setting', (_event, key: string, value: string) => {
     db.setSetting(key, value)
+    if (key === 'language') {
+      setLocale(value as Locale)
+      rebuildMenu()
+    }
   })
 
   ipcMain.handle('set-base-directory', async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openDirectory'],
-      title: 'Zielordner wählen',
+      title: t('folders.baseDir'),
     })
     if (result.canceled || result.filePaths.length === 0) return null
     const dir = result.filePaths[0]

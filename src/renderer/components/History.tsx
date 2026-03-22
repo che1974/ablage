@@ -1,32 +1,26 @@
 import { useState, useEffect } from 'react'
+import { useI18n } from '../hooks/useI18n'
 import type { HistoryEntry } from '../../shared/types'
 
-const TYPE_LABELS: Record<string, string> = {
-  rechnung: 'Rechnung',
-  vertrag: 'Vertrag',
-  lohnabrechnung: 'Lohnabrechnung',
-  kontoauszug: 'Kontoauszug',
-  quittung: 'Quittung',
-  bescheinigung: 'Bescheinigung',
-  brief: 'Brief',
-  sonstiges: 'Sonstiges',
-}
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr)
+function groupByDate(
+  entries: HistoryEntry[],
+  t: (key: string) => string,
+): Map<string, HistoryEntry[]> {
+  const groups = new Map<string, HistoryEntry[]>()
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  if (d.toDateString() === today.toDateString()) return 'Heute'
-  if (d.toDateString() === yesterday.toDateString()) return 'Gestern'
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
-function groupByDate(entries: HistoryEntry[]): Map<string, HistoryEntry[]> {
-  const groups = new Map<string, HistoryEntry[]>()
   for (const entry of entries) {
-    const key = formatDate(entry.createdAt)
+    const d = new Date(entry.createdAt)
+    let key: string
+    if (d.toDateString() === today.toDateString()) {
+      key = t('history.today')
+    } else if (d.toDateString() === yesterday.toDateString()) {
+      key = t('history.yesterday')
+    } else {
+      key = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    }
     const group = groups.get(key) || []
     group.push(entry)
     groups.set(key, group)
@@ -35,6 +29,7 @@ function groupByDate(entries: HistoryEntry[]): Map<string, HistoryEntry[]> {
 }
 
 export default function History() {
+  const { t } = useI18n()
   const [history, setHistory] = useState<HistoryEntry[]>([])
 
   const load = () => window.ablage.getHistory().then(setHistory)
@@ -46,15 +41,15 @@ export default function History() {
     load()
   }
 
-  const grouped = groupByDate(history)
+  const grouped = groupByDate(history, t)
 
   return (
     <div className="settings-panel">
       <section className="settings-section">
-        <h2>Verlauf</h2>
+        <h2>{t('history.title')}</h2>
 
         {history.length === 0 ? (
-          <p className="empty-state">Noch keine Aktionen durchgeführt</p>
+          <p className="empty-state">{t('history.empty')}</p>
         ) : (
           <div className="history-groups">
             {[...grouped.entries()].map(([date, entries]) => (
@@ -71,7 +66,7 @@ export default function History() {
                       <div className="history-info">
                         <div className="history-filename">
                           {entry.status === 'skipped'
-                            ? `${entry.originalName} — Übersprungen`
+                            ? `${entry.originalName} — ${t('history.skipped')}`
                             : `${entry.originalName} → ${entry.newName || '?'}`}
                         </div>
                         {entry.newPath && entry.status === 'completed' && (
@@ -79,7 +74,7 @@ export default function History() {
                         )}
                         {entry.documentType && (
                           <span className="history-type">
-                            {TYPE_LABELS[entry.documentType] || entry.documentType}
+                            {t(`docTypes.${entry.documentType}`)}
                           </span>
                         )}
                       </div>
@@ -88,7 +83,7 @@ export default function History() {
                           className="btn btn-secondary btn-sm"
                           onClick={() => handleUndo(entry.id)}
                         >
-                          Rückgängig
+                          {t('history.undo')}
                         </button>
                       )}
                     </li>

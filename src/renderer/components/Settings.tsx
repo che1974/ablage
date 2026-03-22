@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useI18n } from '../hooks/useI18n'
+import { setLocale, getLocale, LOCALE_NAMES, type Locale } from '../../shared/i18n'
 
 export default function WatchFolders() {
+  const { t } = useI18n()
   const [folders, setFolders] = useState<string[]>([])
   const [baseDir, setBaseDir] = useState<string>('')
+  const [lang, setLang] = useState<Locale>(getLocale())
 
   useEffect(() => {
     window.ablage.getWatchFolders().then(setFolders)
@@ -26,31 +30,49 @@ export default function WatchFolders() {
     if (dir) setBaseDir(dir)
   }
 
+  const handleLanguageChange = async (newLang: Locale) => {
+    setLang(newLang)
+    setLocale(newLang)
+    await window.ablage.setSetting('language', newLang)
+  }
+
   return (
     <div className="settings-panel">
       <section className="settings-section">
-        <h2>Zielordner</h2>
-        <p className="settings-hint">
-          Hierhin werden organisierte Dateien verschoben.
-        </p>
+        <h2>{t('settings.language')}</h2>
+        <p className="settings-hint">{t('settings.languageHint')}</p>
+        <div className="language-select">
+          {(Object.keys(LOCALE_NAMES) as Locale[]).map((code) => (
+            <button
+              key={code}
+              className={`lang-btn ${lang === code ? 'active' : ''}`}
+              onClick={() => handleLanguageChange(code)}
+            >
+              {LOCALE_NAMES[code]}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h2>{t('folders.baseDir')}</h2>
+        <p className="settings-hint">{t('folders.baseDirHint')}</p>
         <div className="base-dir-row">
           <span className="base-dir-path">
-            {baseDir || 'Nicht festgelegt'}
+            {baseDir || t('folders.notSet')}
           </span>
           <button className="btn btn-secondary" onClick={handleSetBaseDir}>
-            Wählen...
+            {t('folders.choose')}
           </button>
         </div>
       </section>
 
       <section className="settings-section">
-        <h2>Überwachte Ordner</h2>
-        <p className="settings-hint">
-          Neue Dateien in diesen Ordnern werden automatisch analysiert.
-        </p>
+        <h2>{t('folders.title')}</h2>
+        <p className="settings-hint">{t('folders.hint')}</p>
 
         {folders.length === 0 ? (
-          <p className="empty-state">Keine Ordner konfiguriert</p>
+          <p className="empty-state">{t('folders.empty')}</p>
         ) : (
           <ul className="folder-list">
             {folders.map((f) => (
@@ -59,7 +81,7 @@ export default function WatchFolders() {
                 <button
                   className="btn-icon"
                   onClick={() => handleRemove(f)}
-                  title="Entfernen"
+                  title={t('history.undo')}
                 >
                   &times;
                 </button>
@@ -69,16 +91,16 @@ export default function WatchFolders() {
         )}
 
         <button className="btn btn-secondary" onClick={handleAdd}>
-          + Ordner hinzufügen
+          {t('folders.add')}
         </button>
       </section>
 
       <section className="settings-section">
         <div className="supported-formats">
-          <span className="settings-hint">Unterstützt:</span> PDF, DOCX, JPG, PNG
+          <span className="settings-hint">{t('folders.supported')}</span> {t('folders.supportedFormats')}
         </div>
         <div className="supported-formats">
-          <span className="settings-hint">Ignoriert:</span> .tmp, .part, versteckte Dateien
+          <span className="settings-hint">{t('folders.ignored')}</span> {t('folders.ignoredFormats')}
         </div>
       </section>
     </div>

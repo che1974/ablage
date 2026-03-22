@@ -1,10 +1,11 @@
 import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
-import { createTray } from './tray'
+import { createTray, rebuildMenu } from './tray'
 import { stopWatching, onNewFile } from './watcher'
 import { registerIpcHandlers, restartWatcher } from './ipc-handlers'
-import { initDatabase, closeDatabase } from './database'
+import { initDatabase, closeDatabase, getSetting } from './database'
 import { setPipelineWindow, processFile } from './pipeline'
+import { setLocale, type Locale } from '../shared/i18n'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -31,6 +32,9 @@ function createWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   initDatabase()
+
+  const savedLang = getSetting('language', 'en')
+  setLocale(savedLang as Locale)
 
   mainWindow = createWindow()
   setPipelineWindow(mainWindow)

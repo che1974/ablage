@@ -1,17 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useI18n } from '../hooks/useI18n'
 import type { Rule } from '../../shared/types'
 
-const TYPE_LABELS: Record<string, string> = {
-  rechnung: 'Rechnung',
-  vertrag: 'Vertrag',
-  lohnabrechnung: 'Lohnabrechnung',
-  kontoauszug: 'Kontoauszug',
-  quittung: 'Quittung',
-  bescheinigung: 'Bescheinigung',
-  brief: 'Brief',
-}
-
 export default function RuleEditor() {
+  const { t } = useI18n()
   const [rules, setRules] = useState<Rule[]>([])
 
   useEffect(() => {
@@ -21,13 +13,11 @@ export default function RuleEditor() {
   return (
     <div className="settings-panel">
       <section className="settings-section">
-        <h2>Regeln</h2>
-        <p className="settings-hint">
-          Zuordnung von Dokumenttypen zu Zielordnern und Dateinamen.
-        </p>
+        <h2>{t('rules.title')}</h2>
+        <p className="settings-hint">{t('rules.hint')}</p>
 
         {rules.length === 0 ? (
-          <p className="empty-state">Keine Regeln vorhanden</p>
+          <p className="empty-state">{t('rules.empty')}</p>
         ) : (
           <ul className="rule-list">
             {rules.map((rule) => (
@@ -37,19 +27,19 @@ export default function RuleEditor() {
               >
                 <div className="rule-header">
                   <span className="rule-type">
-                    {TYPE_LABELS[rule.documentType] || rule.documentType}
+                    {t(`docTypes.${rule.documentType}`)}
                   </span>
                   <span className={`rule-badge ${rule.isActive ? 'active' : 'inactive'}`}>
-                    {rule.isActive ? 'Aktiv' : 'Inaktiv'}
+                    {rule.isActive ? t('rules.active') : t('rules.inactive')}
                   </span>
                 </div>
                 <div className="rule-details">
                   <div className="rule-row">
-                    <span className="rule-label">Ordner:</span>
+                    <span className="rule-label">{t('rules.folder')}</span>
                     <span>{rule.targetFolder}</span>
                   </div>
                   <div className="rule-row">
-                    <span className="rule-label">Name:</span>
+                    <span className="rule-label">{t('rules.name')}</span>
                     <span>{rule.nameTemplate}.&#123;ext&#125;</span>
                   </div>
                 </div>

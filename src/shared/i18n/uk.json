@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "Ablage",
+    "version": "Версія 0.1.0",
+    "description": "Інтелектуальна організація документів"
+  },
+  "tabs": {
+    "folders": "Теки",
+    "rules": "Правила",
+    "history": "Історія",
+    "about": "Про програму"
+  },
+  "folders": {
+    "baseDir": "Цільова тека",
+    "baseDirHint": "Сюди переміщуються організовані файли.",
+    "notSet": "Не вказано",
+    "choose": "Обрати...",
+    "title": "Відстежувані теки",
+    "hint": "Нові файли в цих теках аналізуються автоматично.",
+    "empty": "Теки не налаштовані",
+    "add": "+ Додати теку",
+    "supported": "Підтримуються:",
+    "ignored": "Ігноруються:",
+    "supportedFormats": "PDF, DOCX, JPG, PNG",
+    "ignoredFormats": ".tmp, .part, приховані файли"
+  },
+  "rules": {
+    "title": "Правила",
+    "hint": "Відповідність типів документів цільовим текам та іменам файлів.",
+    "empty": "Правила відсутні",
+    "folder": "Тека:",
+    "name": "Ім'я:",
+    "active": "Активне",
+    "inactive": "Неактивне"
+  },
+  "history": {
+    "title": "Історія",
+    "empty": "Ще немає виконаних дій",
+    "today": "Сьогодні",
+    "yesterday": "Вчора",
+    "skipped": "Пропущено",
+    "undo": "Скасувати"
+  },
+  "notification": {
+    "detected": "{type} розпізнано",
+    "file": "Файл:",
+    "accept": "Застосувати",
+    "skip": "Пропустити",
+    "confidence": "{value}%"
+  },
+  "docTypes": {
+    "rechnung": "Рахунок",
+    "vertrag": "Договір",
+    "lohnabrechnung": "Розрахунковий лист",
+    "kontoauszug": "Виписка з рахунку",
+    "quittung": "Квитанція",
+    "bescheinigung": "Довідка",
+    "brief": "Лист",
+    "sonstiges": "Інше",
+    "document": "Документ"
+  },
+  "tray": {
+    "watching": "Відстежується: {count} тек",
+    "noFolders": "Немає тек",
+    "todayCount": "Сьогодні: {count} файлів організовано",
+    "settings": "Налаштування...",
+    "pause": "Призупинити відстеження",
+    "resume": "Відновити відстеження",
+    "quit": "Вийти"
+  },
+  "settings": {
+    "language": "Мова",
+    "languageHint": "Мова інтерфейсу програми."
+  }
+}

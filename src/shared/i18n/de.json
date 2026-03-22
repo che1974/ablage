@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "Ablage",
+    "version": "Version 0.1.0",
+    "description": "Intelligente Dokumentenorganisation"
+  },
+  "tabs": {
+    "folders": "Ordner",
+    "rules": "Regeln",
+    "history": "Verlauf",
+    "about": "Info"
+  },
+  "folders": {
+    "baseDir": "Zielordner",
+    "baseDirHint": "Hierhin werden organisierte Dateien verschoben.",
+    "notSet": "Nicht festgelegt",
+    "choose": "Wählen...",
+    "title": "Überwachte Ordner",
+    "hint": "Neue Dateien in diesen Ordnern werden automatisch analysiert.",
+    "empty": "Keine Ordner konfiguriert",
+    "add": "+ Ordner hinzufügen",
+    "supported": "Unterstützt:",
+    "ignored": "Ignoriert:",
+    "supportedFormats": "PDF, DOCX, JPG, PNG",
+    "ignoredFormats": ".tmp, .part, versteckte Dateien"
+  },
+  "rules": {
+    "title": "Regeln",
+    "hint": "Zuordnung von Dokumenttypen zu Zielordnern und Dateinamen.",
+    "empty": "Keine Regeln vorhanden",
+    "folder": "Ordner:",
+    "name": "Name:",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "history": {
+    "title": "Verlauf",
+    "empty": "Noch keine Aktionen durchgeführt",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "skipped": "Übersprungen",
+    "undo": "Rückgängig"
+  },
+  "notification": {
+    "detected": "{type} erkannt",
+    "file": "Datei:",
+    "accept": "Anwenden",
+    "skip": "Überspringen",
+    "confidence": "{value}%"
+  },
+  "docTypes": {
+    "rechnung": "Rechnung",
+    "vertrag": "Vertrag",
+    "lohnabrechnung": "Lohnabrechnung",
+    "kontoauszug": "Kontoauszug",
+    "quittung": "Quittung",
+    "bescheinigung": "Bescheinigung",
+    "brief": "Brief",
+    "sonstiges": "Sonstiges",
+    "document": "Dokument"
+  },
+  "tray": {
+    "watching": "Überwacht: {count} Ordner",
+    "noFolders": "Keine Ordner",
+    "todayCount": "Heute: {count} Dateien organisiert",
+    "settings": "Einstellungen...",
+    "pause": "Überwachung pausieren",
+    "resume": "Überwachung fortsetzen",
+    "quit": "Beenden"
+  },
+  "settings": {
+    "language": "Sprache",
+    "languageHint": "Sprache der Benutzeroberfläche."
+  }
+}

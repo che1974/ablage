@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "Ablage",
+    "version": "Version 0.1.0",
+    "description": "Organisation intelligente de documents"
+  },
+  "tabs": {
+    "folders": "Dossiers",
+    "rules": "Règles",
+    "history": "Historique",
+    "about": "À propos"
+  },
+  "folders": {
+    "baseDir": "Dossier cible",
+    "baseDirHint": "Les fichiers organisés seront déplacés ici.",
+    "notSet": "Non défini",
+    "choose": "Choisir...",
+    "title": "Dossiers surveillés",
+    "hint": "Les nouveaux fichiers dans ces dossiers sont analysés automatiquement.",
+    "empty": "Aucun dossier configuré",
+    "add": "+ Ajouter un dossier",
+    "supported": "Pris en charge :",
+    "ignored": "Ignorés :",
+    "supportedFormats": "PDF, DOCX, JPG, PNG",
+    "ignoredFormats": ".tmp, .part, fichiers cachés"
+  },
+  "rules": {
+    "title": "Règles",
+    "hint": "Correspondance des types de documents avec les dossiers cibles et noms de fichiers.",
+    "empty": "Aucune règle disponible",
+    "folder": "Dossier :",
+    "name": "Nom :",
+    "active": "Actif",
+    "inactive": "Inactif"
+  },
+  "history": {
+    "title": "Historique",
+    "empty": "Aucune action effectuée",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "skipped": "Ignoré",
+    "undo": "Annuler"
+  },
+  "notification": {
+    "detected": "{type} détecté",
+    "file": "Fichier :",
+    "accept": "Appliquer",
+    "skip": "Ignorer",
+    "confidence": "{value} %"
+  },
+  "docTypes": {
+    "rechnung": "Facture",
+    "vertrag": "Contrat",
+    "lohnabrechnung": "Fiche de paie",
+    "kontoauszug": "Relevé bancaire",
+    "quittung": "Reçu",
+    "bescheinigung": "Attestation",
+    "brief": "Lettre",
+    "sonstiges": "Autre",
+    "document": "Document"
+  },
+  "tray": {
+    "watching": "Surveillance : {count} dossiers",
+    "noFolders": "Aucun dossier",
+    "todayCount": "Aujourd'hui : {count} fichiers organisés",
+    "settings": "Paramètres...",
+    "pause": "Suspendre la surveillance",
+    "resume": "Reprendre la surveillance",
+    "quit": "Quitter"
+  },
+  "settings": {
+    "language": "Langue",
+    "languageHint": "Langue de l'interface."
+  }
+}

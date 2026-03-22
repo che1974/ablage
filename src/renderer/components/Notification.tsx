@@ -1,18 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useI18n } from '../hooks/useI18n'
 import type { MoveSuggestion } from '../../shared/types'
 
-const TYPE_LABELS: Record<string, string> = {
-  rechnung: 'Rechnung',
-  vertrag: 'Vertrag',
-  lohnabrechnung: 'Lohnabrechnung',
-  kontoauszug: 'Kontoauszug',
-  quittung: 'Quittung',
-  bescheinigung: 'Bescheinigung',
-  brief: 'Brief',
-  sonstiges: 'Dokument',
-}
-
 export default function NotificationPanel() {
+  const { t } = useI18n()
   const [suggestions, setSuggestions] = useState<MoveSuggestion[]>([])
 
   useEffect(() => {
@@ -35,40 +26,43 @@ export default function NotificationPanel() {
 
   return (
     <div className="notification-panel">
-      {suggestions.map((s) => (
-        <div key={s.originalPath} className="notification-card">
-          <div className="notification-header">
-            <span className="notification-type">
-              {TYPE_LABELS[s.documentType] || 'Dokument'} erkannt
-            </span>
-            <span className="notification-confidence">
-              {Math.round(s.confidence * 100)}%
-            </span>
-          </div>
-          <div className="notification-body">
-            <div className="notification-row">
-              <span className="notification-label">Datei:</span>
-              <span>{s.originalPath.split('/').pop()}</span>
+      {suggestions.map((s) => {
+        const typeLabel = t(`docTypes.${s.documentType}`) || t('docTypes.document')
+        return (
+          <div key={s.originalPath} className="notification-card">
+            <div className="notification-header">
+              <span className="notification-type">
+                {t('notification.detected', { type: typeLabel })}
+              </span>
+              <span className="notification-confidence">
+                {Math.round(s.confidence * 100)}%
+              </span>
             </div>
-            <div className="notification-row">
-              <span className="notification-label">→</span>
-              <span>{s.suggestedName}</span>
+            <div className="notification-body">
+              <div className="notification-row">
+                <span className="notification-label">{t('notification.file')}</span>
+                <span>{s.originalPath.split('/').pop()}</span>
+              </div>
+              <div className="notification-row">
+                <span className="notification-label">→</span>
+                <span>{s.suggestedName}</span>
+              </div>
+              <div className="notification-row">
+                <span className="notification-label">→</span>
+                <span className="notification-folder">{s.suggestedPath}</span>
+              </div>
             </div>
-            <div className="notification-row">
-              <span className="notification-label">→</span>
-              <span className="notification-folder">{s.suggestedPath}</span>
+            <div className="notification-actions">
+              <button className="btn btn-primary" onClick={() => handleAccept(s)}>
+                {t('notification.accept')}
+              </button>
+              <button className="btn btn-secondary" onClick={() => handleSkip(s)}>
+                {t('notification.skip')}
+              </button>
             </div>
           </div>
-          <div className="notification-actions">
-            <button className="btn btn-primary" onClick={() => handleAccept(s)}>
-              Anwenden
-            </button>
-            <button className="btn btn-secondary" onClick={() => handleSkip(s)}>
-              Überspringen
-            </button>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

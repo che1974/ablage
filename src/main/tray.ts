@@ -1,7 +1,8 @@
 import { Tray, Menu, BrowserWindow, nativeImage, app } from 'electron'
 import { basename, join } from 'path'
 import { getWatchFolders } from './database'
-import { startWatching, stopWatching, isWatching } from './watcher'
+import { startWatching, stopWatching } from './watcher'
+import { t } from '../shared/i18n'
 
 let tray: Tray | null = null
 let mainWindow: BrowserWindow | null = null
@@ -50,24 +51,24 @@ export function rebuildMenu(): void {
         sublabel: f,
         enabled: false,
       }))
-    : [{ label: '  Keine Ordner', enabled: false }]
+    : [{ label: `  ${t('tray.noFolders')}`, enabled: false }]
 
   const template: Electron.MenuItemConstructorOptions[] = [
     { label: 'Ablage', enabled: false },
     { type: 'separator' },
     {
-      label: `Überwacht: ${folders.length} Ordner`,
+      label: t('tray.watching', { count: folders.length }),
       enabled: false,
     },
     ...folderItems,
     { type: 'separator' },
     {
-      label: `Heute: ${todayCount} Dateien organisiert`,
+      label: t('tray.todayCount', { count: todayCount }),
       enabled: false,
     },
     { type: 'separator' },
     {
-      label: 'Einstellungen...',
+      label: t('tray.settings'),
       click: () => {
         mainWindow!.show()
         mainWindow!.focus()
@@ -75,7 +76,7 @@ export function rebuildMenu(): void {
     },
     { type: 'separator' },
     {
-      label: paused ? 'Überwachung fortsetzen' : 'Überwachung pausieren',
+      label: paused ? t('tray.resume') : t('tray.pause'),
       click: () => {
         if (paused) {
           const dirs = getWatchFolders()
@@ -89,7 +90,7 @@ export function rebuildMenu(): void {
       },
     },
     {
-      label: 'Beenden',
+      label: t('tray.quit'),
       click: () => app.quit(),
     },
   ]
