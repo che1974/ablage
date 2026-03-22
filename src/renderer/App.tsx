@@ -11,10 +11,10 @@ import { setLocale, type Locale } from '../shared/i18n'
 type Tab = 'folders' | 'rules' | 'history' | 'about'
 
 const TAB_ICONS: Record<Tab, string> = {
-  folders: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
-  rules: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
-  history: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-  about: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+  folders: 'folder',
+  rules: 'checklist',
+  history: 'history',
+  about: 'info',
 }
 
 export default function App() {
@@ -45,10 +45,12 @@ export default function App() {
 
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <div className="sidebar-logo">A</div>
+          <div className="sidebar-logo">
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>folder</span>
+          </div>
           <div>
             <div className="sidebar-title">Ablage</div>
-            <div className="sidebar-subtitle">SMART ORGANIZER</div>
+            <div className="sidebar-subtitle">Smart Organizer</div>
           </div>
         </div>
 
@@ -59,9 +61,7 @@ export default function App() {
               className={`sidebar-nav-item ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d={TAB_ICONS[tab]} />
-              </svg>
+              <span className="material-symbols-outlined">{TAB_ICONS[tab]}</span>
               {t(`tabs.${tab}`)}
             </button>
           ))}
@@ -72,7 +72,8 @@ export default function App() {
             className="sidebar-action-btn"
             onClick={() => { setActiveTab('rules'); setShowWizard(true) }}
           >
-            + {t('rules.addRule').replace('+ ', '')}
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+            {t('rules.addRule').replace('+ ', '')}
           </button>
         </div>
       </aside>
@@ -97,18 +98,17 @@ export default function App() {
           {activeTab === 'about' && (
             <div className="content-panel">
               <section className="section">
+                <p className="section-label">About</p>
                 <h2 className="section-title">{t('app.name')}</h2>
                 <p className="section-text">{t('app.version')}</p>
                 <p className="section-text">{t('app.description')}</p>
               </section>
 
               <section className="section">
-                <h2 className="section-title">{t('help.title')}</h2>
-
                 <button
                   className="btn btn-secondary"
                   onClick={() => setShowOnboarding(true)}
-                  style={{ marginBottom: 16 }}
+                  style={{ marginBottom: 24 }}
                 >
                   {t('help.showGuide')}
                 </button>

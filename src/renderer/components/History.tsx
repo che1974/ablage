@@ -33,7 +33,6 @@ export default function History() {
   const [history, setHistory] = useState<HistoryEntry[]>([])
 
   const load = () => window.ablage.getHistory().then(setHistory)
-
   useEffect(() => { load() }, [])
 
   const handleUndo = async (id: number) => {
@@ -44,56 +43,60 @@ export default function History() {
   const grouped = groupByDate(history, t)
 
   return (
-    <div className="content-panel">
-      <section className="section">
-        <h2 className="section-title">{t('history.title')}</h2>
+    <div className="content-panel" style={{ maxWidth: 800 }}>
+      <div className="page-header">
+        <div>
+          <p className="section-label">Activity Log</p>
+          <h2 className="section-title">{t('history.title')}</h2>
+        </div>
+      </div>
 
-        {history.length === 0 ? (
-          <p className="empty-state">{t('history.empty')}</p>
-        ) : (
-          <div className="history-groups">
-            {[...grouped.entries()].map(([date, entries]) => (
-              <div key={date} className="history-group">
-                <h3 className="history-date">{date}</h3>
-                <ul className="history-list">
-                  {entries.map((entry) => (
-                    <li key={entry.id} className="history-item">
-                      <div className="history-status">
-                        {entry.status === 'completed' && <span className="status-dot completed" />}
-                        {entry.status === 'skipped' && <span className="status-dot skipped" />}
-                        {entry.status === 'undone' && <span className="status-dot undone" />}
-                      </div>
-                      <div className="history-info">
-                        <div className="history-filename">
-                          {entry.status === 'skipped'
-                            ? `${entry.originalName} — ${t('history.skipped')}`
-                            : `${entry.originalName} → ${entry.newName || '?'}`}
-                        </div>
-                        {entry.newPath && entry.status === 'completed' && (
-                          <div className="history-path">{entry.newPath}</div>
-                        )}
-                        {entry.documentType && (
-                          <span className="history-type">
-                            {t(`docTypes.${entry.documentType}`)}
-                          </span>
-                        )}
-                      </div>
-                      {entry.status === 'completed' && (
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => handleUndo(entry.id)}
-                        >
-                          {t('history.undo')}
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+      {history.length === 0 ? (
+        <p className="empty-state">{t('history.empty')}</p>
+      ) : (
+        <div>
+          {[...grouped.entries()].map(([date, entries]) => (
+            <section key={date} className="history-group">
+              <div className="history-date-header">
+                <span className="history-date-label">{date}</span>
+                <div className="history-date-line" />
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <ul className="history-list">
+                {entries.map((entry) => (
+                  <li key={entry.id} className="history-item">
+                    <span className={`status-dot ${entry.status}`} />
+                    <div className="history-info">
+                      <div className="history-filename-row">
+                        <span className="history-original-name">{entry.originalName}</span>
+                        <span className="material-symbols-outlined history-arrow" style={{ fontSize: 14 }}>arrow_forward</span>
+                        <span className={`history-new-name ${entry.status === 'skipped' ? 'skipped' : ''}`}>
+                          {entry.status === 'skipped'
+                            ? t('history.skipped')
+                            : entry.newName || '?'}
+                        </span>
+                      </div>
+                      {entry.newPath && entry.status === 'completed' && (
+                        <div className="history-path">
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>folder_open</span>
+                          <span>{entry.newPath}</span>
+                        </div>
+                      )}
+                    </div>
+                    {entry.status === 'completed' && (
+                      <button
+                        className="btn-text-primary history-undo"
+                        onClick={() => handleUndo(entry.id)}
+                      >
+                        {t('history.undo')}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

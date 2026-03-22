@@ -38,8 +38,8 @@ export default function WatchFolders() {
 
   return (
     <div className="content-panel">
-      <fieldset className="fieldset">
-        <legend>{t('settings.language')}</legend>
+      <section className="section">
+        <h2 className="section-label">{t('settings.language')}</h2>
         <div className="language-select">
           {(Object.keys(LOCALE_NAMES) as Locale[]).map((code) => (
             <button
@@ -51,14 +51,12 @@ export default function WatchFolders() {
             </button>
           ))}
         </div>
-      </fieldset>
+      </section>
 
-      <fieldset className="fieldset">
-        <legend>{t('folders.baseDir')}</legend>
+      <section className="section">
+        <h2 className="section-label">{t('folders.baseDir')}</h2>
         <div className="folder-card">
-          <svg className="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-          </svg>
+          <span className="material-symbols-outlined folder-icon">folder_managed</span>
           <span className="folder-card-path">
             {baseDir || t('folders.notSet')}
           </span>
@@ -66,10 +64,10 @@ export default function WatchFolders() {
             {t('folders.choose')}
           </button>
         </div>
-      </fieldset>
+      </section>
 
-      <fieldset className="fieldset">
-        <legend>{t('folders.title')}</legend>
+      <section className="section">
+        <h2 className="section-label">{t('folders.title')}</h2>
 
         {folders.length === 0 ? (
           <p className="empty-state">{t('folders.empty')}</p>
@@ -77,15 +75,10 @@ export default function WatchFolders() {
           <div className="folder-list">
             {folders.map((f) => (
               <div key={f} className="folder-card">
-                <svg className="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
+                <span className="material-symbols-outlined folder-icon">folder_open</span>
                 <span className="folder-card-path">{f}</span>
-                <button
-                  className="btn-close"
-                  onClick={() => handleRemove(f)}
-                >
-                  &times;
+                <button className="btn-close" onClick={() => handleRemove(f)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
                 </button>
               </div>
             ))}
@@ -93,21 +86,20 @@ export default function WatchFolders() {
         )}
 
         <button className="add-card" onClick={handleAdd}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v8M8 12h8" />
-          </svg>
+          <span className="material-symbols-outlined">add_circle</span>
           {t('folders.add')}
         </button>
-      </fieldset>
+      </section>
 
-      <div className="info-row">
-        <span className="info-label">{t('folders.supported')}</span>
-        <span className="info-value">{t('folders.supportedFormats')}</span>
-      </div>
-      <div className="info-row">
-        <span className="info-label">{t('folders.ignored')}</span>
-        <span className="info-value">{t('folders.ignoredFormats')}</span>
+      <div className="info-footer">
+        <div className="info-row">
+          <span className="info-label">{t('folders.supported')}</span>
+          <span className="info-value">{t('folders.supportedFormats')}</span>
+        </div>
+        <div className="info-row">
+          <span className="info-label">{t('folders.ignored')}</span>
+          <span className="info-value">{t('folders.ignoredFormats')}</span>
+        </div>
       </div>
     </div>
   )
