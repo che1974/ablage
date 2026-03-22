@@ -87,5 +87,35 @@
   "settings": {
     "language": "Sprache",
     "languageHint": "Sprache der Benutzeroberfläche."
+  },
+  "onboarding": {
+    "welcome": "Willkommen bei Ablage",
+    "intro": "Ablage hilft dir, Dokumente automatisch zu organisieren. So geht's los:",
+    "step1title": "1. Zielordner festlegen",
+    "step1": "Wähle einen Ordner, in den organisierte Dateien verschoben werden. Ablage erstellt Unterordner wie Finanzen/Rechnungen/2026/ automatisch.",
+    "step2title": "2. Überwachte Ordner hinzufügen",
+    "step2": "Füge Ordner hinzu, die überwacht werden sollen (z.B. Downloads, Desktop). Neue Dateien werden automatisch analysiert.",
+    "step3title": "3. Datei ablegen",
+    "step3": "Kopiere oder speichere eine PDF-, DOCX- oder Bilddatei in einen überwachten Ordner. Innerhalb weniger Sekunden erscheint ein Vorschlag.",
+    "step4title": "4. Annehmen oder überspringen",
+    "step4": "Prüfe den Vorschlag: erkannter Typ, vorgeschlagener Name und Zielordner. Klicke Anwenden zum Verschieben oder Überspringen zum Ignorieren.",
+    "getStarted": "Los geht's",
+    "showAgain": "Diese Anleitung kann jederzeit im Info-Tab erneut geöffnet werden."
+  },
+  "help": {
+    "title": "So funktioniert's",
+    "showGuide": "Einrichtungsanleitung anzeigen",
+    "tipsTitle": "Tipps",
+    "tip1": "Ablage läuft im System Tray. Das Fenster kann geschlossen werden — die Überwachung läuft im Hintergrund weiter.",
+    "tip2": "Regeln bestimmen, wie Dateien klassifiziert werden. Jede Regel hat Schlüsselwörter oder ein Regex-Muster, das mit dem Dateiinhalt abgeglichen wird.",
+    "tip3": "Einfache Regeln verwenden kommagetrennte Schlüsselwörter. Eine Datei passt, wenn genügend Wörter gefunden werden (konfigurierbare Schwelle).",
+    "tip4": "Regex-Regeln verwenden einen regulären Ausdruck. Die Datei passt, wenn das Muster im Text gefunden wird.",
+    "tip5": "Jede Verschiebung kann im Verlauf-Tab rückgängig gemacht werden. Die Datei wird an ihren ursprünglichen Ort zurückgelegt.",
+    "tip6": "Verwende {Sender}, {Date}, {YYYY} Platzhalter in Namensvorlagen. Beispiel: Rechnung_{Sender}_{Date}",
+    "templatesTitle": "Platzhalter für Namensvorlagen",
+    "tmplSender": "{Sender} — erkannter Firmenname oder Absender",
+    "tmplDate": "{Date} — Dokumentdatum (JJJJ-MM-TT)",
+    "tmplYYYY": "{YYYY} — Jahr (in Ordnerpfaden)",
+    "tmplExt": "{ext} — originale Dateierweiterung"
   }
 }

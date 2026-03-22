@@ -87,5 +87,35 @@
   "settings": {
     "language": "Language",
     "languageHint": "Application interface language."
+  },
+  "onboarding": {
+    "welcome": "Welcome to Ablage",
+    "intro": "Ablage helps you organize documents automatically. Here's how to get started:",
+    "step1title": "1. Set target folder",
+    "step1": "Choose a folder where organized files will be moved. Ablage will create subfolders like Finanzen/Rechnungen/2026/ automatically.",
+    "step2title": "2. Add watched folders",
+    "step2": "Add folders to monitor (e.g. Downloads, Desktop). New files in these folders will be analyzed.",
+    "step3title": "3. Drop a file",
+    "step3": "Copy or save a PDF, DOCX, or image into a watched folder. Within a few seconds you'll see a suggestion notification.",
+    "step4title": "4. Accept or skip",
+    "step4": "Review the suggestion: the detected type, proposed name, and target folder. Click Apply to move the file, or Skip to ignore.",
+    "getStarted": "Get started",
+    "showAgain": "You can reopen this guide from the About tab."
+  },
+  "help": {
+    "title": "How it works",
+    "showGuide": "Show setup guide",
+    "tipsTitle": "Tips",
+    "tip1": "Ablage runs in the system tray. Close the window — it keeps working in the background.",
+    "tip2": "Rules determine how files are classified. Each rule has keywords or a regex pattern that is matched against the file content.",
+    "tip3": "Simple rules use comma-separated keywords. A file matches when enough keywords are found (configurable threshold).",
+    "tip4": "Regex rules use a regular expression. The file matches if the pattern is found anywhere in the text.",
+    "tip5": "You can undo any move from the History tab. The file will be returned to its original location.",
+    "tip6": "Use {Sender}, {Date}, {YYYY} placeholders in name templates. Example: Rechnung_{Sender}_{Date}",
+    "templatesTitle": "Name template placeholders",
+    "tmplSender": "{Sender} — detected company or sender name",
+    "tmplDate": "{Date} — document date (YYYY-MM-DD)",
+    "tmplYYYY": "{YYYY} — year (in folder paths)",
+    "tmplExt": "{ext} — original file extension"
   }
 }
