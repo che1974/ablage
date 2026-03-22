@@ -15,6 +15,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
   const { t } = useI18n()
   const [rules, setRules] = useState<Rule[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [editDocType, setEditDocType] = useState<DocumentType>('rechnung')
   const [editFolder, setEditFolder] = useState('')
   const [editName, setEditName] = useState('')
   const [editPattern, setEditPattern] = useState('')
@@ -26,6 +27,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
 
   const startEdit = (rule: Rule) => {
     setEditingId(rule.id)
+    setEditDocType(rule.documentType)
     setEditFolder(rule.targetFolder)
     setEditName(rule.nameTemplate)
     setEditPattern(rule.pattern)
@@ -38,6 +40,7 @@ export default function RuleEditor({ onOpenWizard }: Props) {
   const save = async () => {
     if (editingId === null) return
     await window.ablage.updateRule(editingId, {
+      documentType: editDocType,
       targetFolder: editFolder,
       nameTemplate: editName,
       pattern: editPattern,
@@ -93,11 +96,23 @@ export default function RuleEditor({ onOpenWizard }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
                     <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>edit_note</span>
                     <span style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--primary)' }}>
-                      {t('rules.edit')}: {t(`docTypes.${rule.documentType}`)}
+                      {t('rules.edit')}
                     </span>
                   </div>
                   <div className="rule-edit-form">
                     <div className="rule-edit-row">
+                      <div className="rule-edit-group">
+                        <label className="rule-edit-label">{t('rules.docType')}</label>
+                        <select
+                          className="rule-edit-input"
+                          value={editDocType}
+                          onChange={(e) => setEditDocType(e.target.value as DocumentType)}
+                        >
+                          {DOC_TYPES.map((dt) => (
+                            <option key={dt} value={dt}>{t(`docTypes.${dt}`)}</option>
+                          ))}
+                        </select>
+                      </div>
                       <div className="rule-edit-group">
                         <label className="rule-edit-label">{t('rules.type')}</label>
                         <div className="rule-type-toggle">

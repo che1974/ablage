@@ -4,16 +4,18 @@ import WatchFolders from './components/Settings'
 import RuleEditor from './components/RuleEditor'
 import RuleWizard from './components/RuleWizard'
 import History from './components/History'
+import Guide from './components/Guide'
 import Onboarding from './components/Onboarding'
 import { useI18n } from './hooks/useI18n'
 import { setLocale, type Locale } from '../shared/i18n'
 
-type Tab = 'folders' | 'rules' | 'history' | 'about'
+type Tab = 'folders' | 'rules' | 'history' | 'guide' | 'about'
 
 const TAB_ICONS: Record<Tab, string> = {
   folders: 'folder',
   rules: 'checklist',
   history: 'history',
+  guide: 'menu_book',
   about: 'info',
 }
 
@@ -55,7 +57,7 @@ export default function App() {
         </div>
 
         <nav className="sidebar-nav">
-          {(['folders', 'rules', 'history', 'about'] as Tab[]).map((tab) => (
+          {(['folders', 'rules', 'history', 'guide', 'about'] as Tab[]).map((tab) => (
             <button
               key={tab}
               className={`sidebar-nav-item ${activeTab === tab ? 'active' : ''}`}
@@ -95,6 +97,7 @@ export default function App() {
             />
           )}
           {activeTab === 'history' && <History />}
+          {activeTab === 'guide' && <Guide />}
           {activeTab === 'about' && (
             <div className="content-panel">
               <section className="section">
