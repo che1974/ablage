@@ -2,6 +2,8 @@ import { ipcMain, dialog } from 'electron'
 import { startWatching, stopWatching } from './watcher'
 import * as db from './database'
 import { acceptSuggestion, skipSuggestionHandler, undoOperation } from './pipeline'
+import { rebuildMenu } from './tray'
+import { getPendingQueue } from './notifications'
 import type { MoveSuggestion } from '../shared/types'
 
 export function registerIpcHandlers(): void {
@@ -19,11 +21,17 @@ export function registerIpcHandlers(): void {
     const folder = result.filePaths[0]
     db.addWatchFolder(folder)
     restartWatcher()
+    rebuildMenu()
   })
 
   ipcMain.handle('remove-watch-folder', (_event, path: string) => {
     db.removeWatchFolder(path)
     restartWatcher()
+    rebuildMenu()
+  })
+
+  ipcMain.handle('get-pending-suggestions', () => {
+    return getPendingQueue()
   })
 
   ipcMain.handle('get-history', () => {

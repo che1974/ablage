@@ -3,6 +3,8 @@ import { extractText } from './extractor'
 import { classify } from './classifier'
 import { moveFile, skipFile, undoMove } from './mover'
 import { getSetting } from './database'
+import { showSuggestionNotification, removePending } from './notifications'
+import { incrementTodayCount } from './tray'
 import type { FileEvent, MoveSuggestion } from '../shared/types'
 
 let mainWindow: BrowserWindow | null = null
@@ -33,9 +35,7 @@ export async function processFile(event: FileEvent): Promise<void> {
     fields: classification.fields,
   }
 
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('new-suggestion', suggestion)
-  }
+  showSuggestionNotification(suggestion, mainWindow)
 }
 
 export async function acceptSuggestion(suggestion: MoveSuggestion): Promise<void> {
@@ -45,11 +45,14 @@ export async function acceptSuggestion(suggestion: MoveSuggestion): Promise<void
     return
   }
 
+  removePending(suggestion.originalPath)
   const historyId = await moveFile(suggestion, baseDir)
+  incrementTodayCount()
   console.log(`[Pipeline] Accepted: ${suggestion.suggestedName} (history #${historyId})`)
 }
 
 export function skipSuggestionHandler(suggestion: MoveSuggestion): void {
+  removePending(suggestion.originalPath)
   const historyId = skipFile(suggestion)
   console.log(`[Pipeline] Skipped: ${suggestion.originalPath} (history #${historyId})`)
 }

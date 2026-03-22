@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import NotificationPanel from './components/Notification'
 
 type Tab = 'folders' | 'rules' | 'history' | 'about'
 
@@ -7,6 +8,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <NotificationPanel />
       <header className="app-header">
         <h1>Ablage</h1>
         <nav className="tabs">
