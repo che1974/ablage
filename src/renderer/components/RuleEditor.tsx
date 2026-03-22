@@ -5,10 +5,35 @@ import type { Rule } from '../../shared/types'
 export default function RuleEditor() {
   const { t } = useI18n()
   const [rules, setRules] = useState<Rule[]>([])
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editFolder, setEditFolder] = useState('')
+  const [editName, setEditName] = useState('')
 
-  useEffect(() => {
-    window.ablage.getRules().then(setRules)
-  }, [])
+  const load = () => window.ablage.getRules().then(setRules)
+
+  useEffect(() => { load() }, [])
+
+  const startEdit = (rule: Rule) => {
+    setEditingId(rule.id)
+    setEditFolder(rule.targetFolder)
+    setEditName(rule.nameTemplate)
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+  }
+
+  const saveEdit = async () => {
+    if (editingId === null) return
+    await window.ablage.updateRule(editingId, editFolder, editName)
+    setEditingId(null)
+    load()
+  }
+
+  const handleToggle = async (rule: Rule) => {
+    await window.ablage.toggleRule(rule.id, !rule.isActive)
+    load()
+  }
 
   return (
     <div className="settings-panel">
@@ -29,20 +54,62 @@ export default function RuleEditor() {
                   <span className="rule-type">
                     {t(`docTypes.${rule.documentType}`)}
                   </span>
-                  <span className={`rule-badge ${rule.isActive ? 'active' : 'inactive'}`}>
-                    {rule.isActive ? t('rules.active') : t('rules.inactive')}
-                  </span>
-                </div>
-                <div className="rule-details">
-                  <div className="rule-row">
-                    <span className="rule-label">{t('rules.folder')}</span>
-                    <span>{rule.targetFolder}</span>
-                  </div>
-                  <div className="rule-row">
-                    <span className="rule-label">{t('rules.name')}</span>
-                    <span>{rule.nameTemplate}.&#123;ext&#125;</span>
+                  <div className="rule-header-actions">
+                    <span className={`rule-badge ${rule.isActive ? 'active' : 'inactive'}`}>
+                      {rule.isActive ? t('rules.active') : t('rules.inactive')}
+                    </span>
                   </div>
                 </div>
+
+                {editingId === rule.id ? (
+                  <div className="rule-edit-form">
+                    <label className="rule-edit-label">
+                      {t('rules.folder')}
+                      <input
+                        className="rule-edit-input"
+                        value={editFolder}
+                        onChange={(e) => setEditFolder(e.target.value)}
+                      />
+                    </label>
+                    <label className="rule-edit-label">
+                      {t('rules.name')}
+                      <input
+                        className="rule-edit-input"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </label>
+                    <div className="rule-edit-actions">
+                      <button className="btn btn-primary btn-sm" onClick={saveEdit}>
+                        {t('rules.save')}
+                      </button>
+                      <button className="btn btn-secondary btn-sm" onClick={cancelEdit}>
+                        {t('rules.cancel')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="rule-details">
+                      <div className="rule-row">
+                        <span className="rule-label">{t('rules.folder')}</span>
+                        <span>{rule.targetFolder}</span>
+                      </div>
+                      <div className="rule-row">
+                        <span className="rule-label">{t('rules.name')}</span>
+                        <span>{rule.nameTemplate}.&#123;ext&#125;</span>
+                      </div>
+                    </div>
+                    <div className="rule-actions">
+                      <button className="btn btn-secondary btn-sm" onClick={() => startEdit(rule)}>
+                        {t('rules.edit')}
+                      </button>
+                      <button className="btn btn-secondary btn-sm" onClick={() => handleToggle(rule)}>
+                        {rule.isActive ? t('rules.disable') : t('rules.enable')}
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>

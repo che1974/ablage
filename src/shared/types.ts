@@ -84,6 +84,8 @@ export interface IpcApi {
   getHistory: () => Promise<HistoryEntry[]>
   undoOperation: (id: number) => Promise<void>
   getRules: () => Promise<Rule[]>
+  updateRule: (id: number, targetFolder: string, nameTemplate: string) => Promise<void>
+  toggleRule: (id: number, isActive: boolean) => Promise<void>
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => void
   acceptSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   skipSuggestion: (suggestion: MoveSuggestion) => Promise<void>

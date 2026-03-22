@@ -47,6 +47,14 @@ export function registerIpcHandlers(): void {
     return db.getRules()
   })
 
+  ipcMain.handle('update-rule', (_event, id: number, targetFolder: string, nameTemplate: string) => {
+    db.updateRule(id, targetFolder, nameTemplate)
+  })
+
+  ipcMain.handle('toggle-rule', (_event, id: number, isActive: boolean) => {
+    db.toggleRule(id, isActive)
+  })
+
   ipcMain.handle('accept-suggestion', async (_event, suggestion: MoveSuggestion) => {
     await acceptSuggestion(suggestion)
   })

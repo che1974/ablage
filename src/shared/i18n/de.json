@@ -31,7 +31,12 @@
     "folder": "Ordner:",
     "name": "Name:",
     "active": "Aktiv",
-    "inactive": "Inaktiv"
+    "inactive": "Inaktiv",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren"
   },
   "history": {
     "title": "Verlauf",

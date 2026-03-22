@@ -8,6 +8,10 @@ const api: IpcApi = {
   getHistory: () => ipcRenderer.invoke('get-history'),
   undoOperation: (id: number) => ipcRenderer.invoke('undo-operation', id),
   getRules: () => ipcRenderer.invoke('get-rules'),
+  updateRule: (id: number, targetFolder: string, nameTemplate: string) =>
+    ipcRenderer.invoke('update-rule', id, targetFolder, nameTemplate),
+  toggleRule: (id: number, isActive: boolean) =>
+    ipcRenderer.invoke('toggle-rule', id, isActive),
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => {
     ipcRenderer.on('new-suggestion', (_event, suggestion) => callback(suggestion))
   },

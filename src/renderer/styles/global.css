@@ -358,6 +358,54 @@ body {
   min-width: 50px;
 }
 
+.rule-header-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.rule-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.rule-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.rule-edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: #666;
+}
+
+.rule-edit-input {
+  padding: 6px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #333;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.rule-edit-input:focus {
+  border-color: #2563eb;
+}
+
+.rule-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
 /* History */
 
 .history-group {
