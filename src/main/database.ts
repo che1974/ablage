@@ -54,6 +54,7 @@ export function initDatabase(): void {
   `)
 
   migrateRules()
+  migrateRuleTemplates()
   seedDefaultRules()
 }
 
@@ -68,6 +69,28 @@ function migrateRules(): void {
       ALTER TABLE rules ADD COLUMN pattern TEXT NOT NULL DEFAULT '';
       ALTER TABLE rules ADD COLUMN min_matches INTEGER NOT NULL DEFAULT 2;
     `)
+  }
+}
+
+function migrateRuleTemplates(): void {
+  if (!db) return
+
+  const renames: [string, string, string][] = [
+    ['Finanzen/Rechnungen/{YYYY}/', 'Finance/Invoices/{YYYY}/', 'Invoice_{Sender}_{Date}'],
+    ['Verträge/', 'Contracts/', 'Contract_{Sender}_{Date}'],
+    ['Finanzen/Gehaltsabrechnungen/{YYYY}/', 'Finance/Payslips/{YYYY}/', 'Payslip_{Date}'],
+    ['Finanzen/Kontoauszüge/{YYYY}/', 'Finance/Statements/{YYYY}/', 'Statement_{Sender}_{Date}'],
+    ['Finanzen/Quittungen/{YYYY}/', 'Finance/Receipts/{YYYY}/', 'Receipt_{Sender}_{Date}'],
+    ['Dokumente/Bescheinigungen/', 'Documents/Certificates/', 'Certificate_{Sender}_{Date}'],
+    ['Dokumente/Briefe/{YYYY}/', 'Documents/Letters/{YYYY}/', 'Letter_{Sender}_{Date}'],
+  ]
+
+  const update = db.prepare(
+    'UPDATE rules SET target_folder = ?, name_template = ? WHERE target_folder = ?',
+  )
+
+  for (const [oldFolder, newFolder, newName] of renames) {
+    update.run(newFolder, newName, oldFolder)
   }
 }
 
