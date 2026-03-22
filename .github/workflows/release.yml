@@ -29,7 +29,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}
-          path: release/*.{dmg,zip}
+          path: |
+            release/*.dmg
+            release/*.zip
 
   build-windows:
     runs-on: windows-latest
@@ -48,7 +50,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-x64
-          path: release/*.{exe,msi}
+          path: |
+            release/*.exe
 
   build-linux:
     runs-on: ubuntu-latest
@@ -67,7 +70,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: linux-x64
-          path: release/*.{AppImage,deb}
+          path: |
+            release/*.AppImage
+            release/*.deb
 
   release:
     needs: [build-macos, build-windows, build-linux]
@@ -81,7 +86,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*
+          files: artifacts/**/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
