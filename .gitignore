@@ -1,0 +1,32 @@
+# Private dev docs
+*TASK*.md
+*CLAUDE*
+.claude/
+*.prompt
+AGENTS.md
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Electron
+release/
+*.dmg
+*.AppImage
+*.snap
+*.deb
+*.rpm
+*.exe
+*.msi
