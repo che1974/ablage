@@ -4,6 +4,7 @@
 .claude/
 *.prompt
 AGENTS.md
+stitch/
 
 # Dependencies
 node_modules/
