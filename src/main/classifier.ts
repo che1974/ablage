@@ -140,6 +140,16 @@ function matchSimpleRule(rule: Rule, text: string): number {
   return count
 }
 
+function matchExtensionRule(rule: Rule, fileExt: string): boolean {
+  const extensions = rule.pattern
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .map((e) => e.startsWith('.') ? e : `.${e}`)
+    .filter(Boolean)
+
+  return extensions.includes(fileExt.toLowerCase())
+}
+
 function matchRegexRule(rule: Rule, text: string): number {
   try {
     const re = new RegExp(rule.pattern, 'i')
@@ -189,18 +199,37 @@ export function classify(
 ): ClassificationResult {
   const filename = basename(filePath)
   const ext = extname(filename)
+  const dbRules = getRules().filter((r) => r.isActive)
 
+  // Extension rules have highest priority — check first
+  for (const rule of dbRules) {
+    if (rule.ruleType !== 'extension') continue
+    if (!matchExtensionRule(rule, ext)) continue
+
+    const type = rule.documentType as DocumentType
+    const fields = extractFields('', basename(filename, ext), type)
+    return {
+      type,
+      confidence: 0.95,
+      fields,
+      suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext),
+      suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
+    }
+  }
+
+  // No text — fallback to filename heuristics
   if (!extraction.hasText) {
     return classifyByFilename(filename)
   }
 
+  // Text-based rules: keywords and regex
   const text = extraction.text
-  const dbRules = getRules().filter((r) => r.isActive)
-
   let bestResult: ClassificationResult | null = null
   let bestConfidence = 0
 
   for (const rule of dbRules) {
+    if (rule.ruleType === 'extension') continue
+
     let matchCount: number
     let totalKeywords: number
 

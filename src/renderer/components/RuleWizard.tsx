@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useI18n } from '../hooks/useI18n'
 import type { DocumentType, RuleType } from '../../shared/types'
 
 const DOC_TYPES: DocumentType[] = [
   'rechnung', 'vertrag', 'lohnabrechnung', 'kontoauszug',
-  'quittung', 'bescheinigung', 'brief', 'sonstiges',
+  'quittung', 'bescheinigung', 'brief',
+  'photos', 'videos', 'audio', 'archives',
+  'spreadsheets', 'presentations', 'ebooks', 'code',
+  'sonstiges',
 ]
 
 const TOTAL_STEPS = 4
@@ -24,6 +27,15 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
   const [minMatches, setMinMatches] = useState(2)
   const [folder, setFolder] = useState('')
   const [nameTemplate, setNameTemplate] = useState('')
+  const [conflicts, setConflicts] = useState<string[]>([])
+
+  useEffect(() => {
+    if (pattern.trim().length > 0) {
+      window.ablage.checkConflicts(ruleType, pattern).then(setConflicts)
+    } else {
+      setConflicts([])
+    }
+  }, [ruleType, pattern])
 
   const canNext = () => {
     if (step === 1) return true
@@ -37,7 +49,7 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
       documentType: docType,
       ruleType,
       pattern,
-      minMatches: ruleType === 'regex' ? 1 : minMatches,
+      minMatches: ruleType === 'simple' ? minMatches : 1,
       targetFolder: folder,
       nameTemplate,
       isActive: true,
@@ -104,6 +116,12 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                   >
                     {t('rules.typeRegex')}
                   </button>
+                  <button
+                    className={`lang-btn ${ruleType === 'extension' ? 'active' : ''}`}
+                    onClick={() => setRuleType('extension')}
+                  >
+                    {t('rules.typeExtension')}
+                  </button>
                 </div>
               </div>
 
@@ -115,15 +133,26 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                   onChange={(e) => setPattern(e.target.value)}
                   placeholder={ruleType === 'simple'
                     ? 'invoice, total, amount, payment, due date'
+                    : ruleType === 'extension'
+                    ? '.jpg, .jpeg, .png, .gif, .webp, .heic'
                     : 'invoice.*total.*\\d+'}
                   rows={3}
                 />
                 <p className="wizard-field-hint">
                   {ruleType === 'simple'
                     ? t('rules.wizard.step2simpleHint')
+                    : ruleType === 'extension'
+                    ? t('rules.wizard.step2extensionHint')
                     : t('rules.wizard.step2regexHint')}
                 </p>
               </div>
+
+              {conflicts.length > 0 && (
+                <div className="conflict-warning">
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>warning</span>
+                  {conflicts.map((c) => t('rules.conflictWarning', { name: c })).join(' ')}
+                </div>
+              )}
 
               {ruleType === 'simple' && (
                 <div className="wizard-field">
@@ -182,8 +211,8 @@ export default function RuleWizard({ onClose, onCreated }: Props) {
                 </div>
                 <div className="wizard-review-row">
                   <span className="wizard-review-label">{t('rules.type')}</span>
-                  <span className={`rule-badge ${ruleType}`}>
-                    {ruleType === 'simple' ? t('rules.typeSimple') : t('rules.typeRegex')}
+                  <span className={`badge ${ruleType === 'simple' ? 'badge-keywords' : ruleType === 'extension' ? 'badge-extension' : 'badge-regex'}`}>
+                    {ruleType === 'simple' ? t('rules.typeSimple') : ruleType === 'extension' ? t('rules.typeExtension') : t('rules.typeRegex')}
                   </span>
                 </div>
                 <div className="wizard-review-row">

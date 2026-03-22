@@ -4,7 +4,10 @@ import type { Rule, RuleType, DocumentType } from '../../shared/types'
 
 const DOC_TYPES: DocumentType[] = [
   'rechnung', 'vertrag', 'lohnabrechnung', 'kontoauszug',
-  'quittung', 'bescheinigung', 'brief', 'sonstiges',
+  'quittung', 'bescheinigung', 'brief',
+  'photos', 'videos', 'audio', 'archives',
+  'spreadsheets', 'presentations', 'ebooks', 'code',
+  'sonstiges',
 ]
 
 interface Props {
@@ -128,6 +131,12 @@ export default function RuleEditor({ onOpenWizard }: Props) {
                           >
                             {t('rules.typeRegex')}
                           </button>
+                          <button
+                            className={`lang-btn ${editRuleType === 'extension' ? 'active' : ''}`}
+                            onClick={() => setEditRuleType('extension')}
+                          >
+                            {t('rules.typeExtension')}
+                          </button>
                         </div>
                       </div>
                       {editRuleType === 'simple' && (
@@ -185,8 +194,8 @@ export default function RuleEditor({ onOpenWizard }: Props) {
                   <div className="rule-header">
                     <span className="rule-type-name">{t(`docTypes.${rule.documentType}`)}</span>
                     <div className="rule-header-badges">
-                      <span className={`badge ${rule.ruleType === 'simple' ? 'badge-keywords' : 'badge-regex'}`}>
-                        {rule.ruleType === 'simple' ? t('rules.typeSimple') : t('rules.typeRegex')}
+                      <span className={`badge ${rule.ruleType === 'simple' ? 'badge-keywords' : rule.ruleType === 'extension' ? 'badge-extension' : 'badge-regex'}`}>
+                        {rule.ruleType === 'simple' ? t('rules.typeSimple') : rule.ruleType === 'extension' ? t('rules.typeExtension') : t('rules.typeRegex')}
                       </span>
                       <span className={`badge ${rule.isActive ? 'badge-active' : 'badge-inactive'}`}>
                         {rule.isActive ? t('rules.active') : t('rules.inactive')}

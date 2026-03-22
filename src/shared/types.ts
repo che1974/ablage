@@ -6,6 +6,14 @@ export type DocumentType =
   | 'quittung'
   | 'bescheinigung'
   | 'brief'
+  | 'photos'
+  | 'videos'
+  | 'audio'
+  | 'archives'
+  | 'spreadsheets'
+  | 'presentations'
+  | 'ebooks'
+  | 'code'
   | 'sonstiges'
 
 export interface ExtractedFields {
@@ -69,7 +77,7 @@ export interface HistoryEntry {
   createdAt: string
 }
 
-export type RuleType = 'simple' | 'regex'
+export type RuleType = 'simple' | 'regex' | 'extension'
 
 export interface Rule {
   id: number
@@ -93,6 +101,7 @@ export interface IpcApi {
   toggleRule: (id: number, isActive: boolean) => Promise<void>
   addRule: (rule: Omit<Rule, 'id'>) => Promise<void>
   deleteRule: (id: number) => Promise<void>
+  checkConflicts: (ruleType: RuleType, pattern: string, excludeId?: number) => Promise<string[]>
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => void
   acceptSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   skipSuggestion: (suggestion: MoveSuggestion) => Promise<void>

@@ -171,6 +171,50 @@ function seedDefaultRules(): void {
   insertMany(defaults)
 }
 
+export function checkConflicts(ruleType: string, pattern: string, excludeId?: number): string[] {
+  if (!db) return []
+
+  const activeRules = db.prepare(
+    'SELECT id, document_type, rule_type, pattern FROM rules WHERE is_active = 1',
+  ).all() as { id: number; document_type: string; rule_type: string; pattern: string }[]
+
+  const conflicts: string[] = []
+
+  if (ruleType === 'extension') {
+    const newExts = new Set(
+      pattern.split(',').map((e) => e.trim().toLowerCase()).map((e) => e.startsWith('.') ? e : `.${e}`).filter(Boolean),
+    )
+
+    for (const rule of activeRules) {
+      if (rule.id === excludeId) continue
+      if (rule.rule_type !== 'extension') continue
+
+      const existingExts = rule.pattern.split(',').map((e) => e.trim().toLowerCase()).map((e) => e.startsWith('.') ? e : `.${e}`)
+      const overlap = existingExts.filter((e) => newExts.has(e))
+      if (overlap.length > 0) {
+        conflicts.push(`${rule.document_type} (${overlap.join(', ')})`)
+      }
+    }
+  } else if (ruleType === 'simple') {
+    const newKeywords = new Set(
+      pattern.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean),
+    )
+
+    for (const rule of activeRules) {
+      if (rule.id === excludeId) continue
+      if (rule.rule_type !== 'simple') continue
+
+      const existingKw = rule.pattern.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean)
+      const overlap = existingKw.filter((k) => newKeywords.has(k))
+      if (overlap.length >= 2) {
+        conflicts.push(`${rule.document_type} (${overlap.slice(0, 3).join(', ')}...)`)
+      }
+    }
+  }
+
+  return conflicts
+}
+
 // --- Watch folders ---
 
 export function getWatchFolders(): string[] {

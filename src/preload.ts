@@ -16,6 +16,8 @@ const api: IpcApi = {
     ipcRenderer.invoke('add-rule', rule),
   deleteRule: (id: number) =>
     ipcRenderer.invoke('delete-rule', id),
+  checkConflicts: (ruleType: string, pattern: string, excludeId?: number) =>
+    ipcRenderer.invoke('check-conflicts', ruleType, pattern, excludeId),
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => {
     ipcRenderer.on('new-suggestion', (_event, suggestion) => callback(suggestion))
   },

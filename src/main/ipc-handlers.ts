@@ -63,6 +63,10 @@ export function registerIpcHandlers(): void {
     db.deleteRule(id)
   })
 
+  ipcMain.handle('check-conflicts', (_event, ruleType: string, pattern: string, excludeId?: number) => {
+    return db.checkConflicts(ruleType, pattern, excludeId)
+  })
+
   ipcMain.handle('accept-suggestion', async (_event, suggestion: MoveSuggestion) => {
     await acceptSuggestion(suggestion)
   })

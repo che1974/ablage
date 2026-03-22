@@ -16,14 +16,14 @@ let watcher: FSWatcher | null = null
 let fileCallbacks: FileCallback[] = []
 let debounceTimers = new Map<string, NodeJS.Timeout>()
 
-function shouldProcess(filePath: string, config: WatcherConfig): boolean {
+function shouldProcess(filePath: string, _config: WatcherConfig): boolean {
   const name = basename(filePath)
 
-  // Skip hidden files
   if (name.startsWith('.')) return false
 
   const ext = extname(filePath).toLowerCase()
-  if (!config.extensions.includes(ext)) return false
+  const ignored = ['.tmp', '.part', '.crdownload', '.download']
+  if (ignored.includes(ext)) return false
 
   return true
 }
