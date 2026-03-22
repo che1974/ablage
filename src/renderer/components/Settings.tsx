@@ -37,10 +37,9 @@ export default function WatchFolders() {
   }
 
   return (
-    <div className="settings-panel">
-      <section className="settings-section">
-        <h2>{t('settings.language')}</h2>
-        <p className="settings-hint">{t('settings.languageHint')}</p>
+    <div className="content-panel">
+      <fieldset className="fieldset">
+        <legend>{t('settings.language')}</legend>
         <div className="language-select">
           {(Object.keys(LOCALE_NAMES) as Locale[]).map((code) => (
             <button
@@ -52,57 +51,64 @@ export default function WatchFolders() {
             </button>
           ))}
         </div>
-      </section>
+      </fieldset>
 
-      <section className="settings-section">
-        <h2>{t('folders.baseDir')}</h2>
-        <p className="settings-hint">{t('folders.baseDirHint')}</p>
-        <div className="base-dir-row">
-          <span className="base-dir-path">
+      <fieldset className="fieldset">
+        <legend>{t('folders.baseDir')}</legend>
+        <div className="folder-card">
+          <svg className="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          <span className="folder-card-path">
             {baseDir || t('folders.notSet')}
           </span>
-          <button className="btn btn-secondary" onClick={handleSetBaseDir}>
+          <button className="btn btn-outline" onClick={handleSetBaseDir}>
             {t('folders.choose')}
           </button>
         </div>
-      </section>
+      </fieldset>
 
-      <section className="settings-section">
-        <h2>{t('folders.title')}</h2>
-        <p className="settings-hint">{t('folders.hint')}</p>
+      <fieldset className="fieldset">
+        <legend>{t('folders.title')}</legend>
 
         {folders.length === 0 ? (
           <p className="empty-state">{t('folders.empty')}</p>
         ) : (
-          <ul className="folder-list">
+          <div className="folder-list">
             {folders.map((f) => (
-              <li key={f} className="folder-item">
-                <span className="folder-path">{f}</span>
+              <div key={f} className="folder-card">
+                <svg className="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                </svg>
+                <span className="folder-card-path">{f}</span>
                 <button
-                  className="btn-icon"
+                  className="btn-close"
                   onClick={() => handleRemove(f)}
-                  title={t('history.undo')}
                 >
                   &times;
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
 
-        <button className="btn btn-secondary" onClick={handleAdd}>
+        <button className="add-card" onClick={handleAdd}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v8M8 12h8" />
+          </svg>
           {t('folders.add')}
         </button>
-      </section>
+      </fieldset>
 
-      <section className="settings-section">
-        <div className="supported-formats">
-          <span className="settings-hint">{t('folders.supported')}</span> {t('folders.supportedFormats')}
-        </div>
-        <div className="supported-formats">
-          <span className="settings-hint">{t('folders.ignored')}</span> {t('folders.ignoredFormats')}
-        </div>
-      </section>
+      <div className="info-row">
+        <span className="info-label">{t('folders.supported')}</span>
+        <span className="info-value">{t('folders.supportedFormats')}</span>
+      </div>
+      <div className="info-row">
+        <span className="info-label">{t('folders.ignored')}</span>
+        <span className="info-value">{t('folders.ignoredFormats')}</span>
+      </div>
     </div>
   )
 }

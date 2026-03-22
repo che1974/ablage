@@ -184,10 +184,10 @@ export default function RuleEditor() {
   )
 
   return (
-    <div className="settings-panel">
-      <section className="settings-section">
-        <h2>{t('rules.title')}</h2>
-        <p className="settings-hint">{t('rules.hint')}</p>
+    <div className="content-panel">
+      <section className="section">
+        <h2 className="section-title">{t('rules.title')}</h2>
+        <p className="section-text" style={{ marginBottom: 16 }}>{t('rules.hint')}</p>
 
         {rules.length === 0 && !adding ? (
           <p className="empty-state">{t('rules.empty')}</p>

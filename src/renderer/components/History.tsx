@@ -44,9 +44,9 @@ export default function History() {
   const grouped = groupByDate(history, t)
 
   return (
-    <div className="settings-panel">
-      <section className="settings-section">
-        <h2>{t('history.title')}</h2>
+    <div className="content-panel">
+      <section className="section">
+        <h2 className="section-title">{t('history.title')}</h2>
 
         {history.length === 0 ? (
           <p className="empty-state">{t('history.empty')}</p>
