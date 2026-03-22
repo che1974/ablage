@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "rebuild-sqlite": "cd node_modules/better-sqlite3 && npx node-gyp rebuild --runtime=electron --target=41.0.3 --arch=arm64 --dist-url=https://electronjs.org/headers"
   },
-  "author": "",
+  "author": {
+    "name": "che1974",
+    "email": "che1974@users.noreply.github.com"
+  },
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^12.8.0",
