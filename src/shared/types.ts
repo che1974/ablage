@@ -87,4 +87,7 @@ export interface IpcApi {
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => void
   acceptSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   skipSuggestion: (suggestion: MoveSuggestion) => Promise<void>
+  getSetting: (key: string) => Promise<string>
+  setSetting: (key: string, value: string) => Promise<void>
+  setBaseDirectory: () => Promise<string | null>
 }

@@ -15,6 +15,9 @@ const api: IpcApi = {
     ipcRenderer.invoke('accept-suggestion', suggestion),
   skipSuggestion: (suggestion: MoveSuggestion) =>
     ipcRenderer.invoke('skip-suggestion', suggestion),
+  getSetting: (key: string) => ipcRenderer.invoke('get-setting', key),
+  setSetting: (key: string, value: string) => ipcRenderer.invoke('set-setting', key, value),
+  setBaseDirectory: () => ipcRenderer.invoke('set-base-directory'),
 }
 
 contextBridge.exposeInMainWorld('ablage', api)

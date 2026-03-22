@@ -2,7 +2,9 @@ import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { createTray } from './tray'
 import { stopWatching, onNewFile } from './watcher'
-import { registerIpcHandlers } from './ipc-handlers'
+import { registerIpcHandlers, restartWatcher } from './ipc-handlers'
+import { initDatabase, closeDatabase } from './database'
+import { setPipelineWindow, processFile } from './pipeline'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -28,16 +30,22 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
+  initDatabase()
+
   mainWindow = createWindow()
+  setPipelineWindow(mainWindow)
   createTray(mainWindow)
   registerIpcHandlers()
 
   onNewFile((event) => {
-    console.log(`[Main] File detected: ${event.filename} (${Math.round(event.size / 1024)}KB)`)
-    // Pipeline will be connected here in Stage 5
+    processFile(event).catch((err) => {
+      console.error(`[Main] Pipeline error for ${event.filename}:`, err)
+    })
   })
 
-  // On macOS, don't quit when all windows are closed
+  // Start watching previously configured folders
+  restartWatcher()
+
   app.on('window-all-closed', () => {
     // Keep app running in tray on all platforms
   })
@@ -45,7 +53,6 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
   stopWatching()
+  closeDatabase()
   mainWindow = null
 })
-
-export { mainWindow }
