@@ -7,18 +7,20 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "dist": "npm run build && electron-builder",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "rebuild-sqlite": "cd node_modules/better-sqlite3 && npx node-gyp rebuild --runtime=electron --target=41.0.3 --arch=arm64 --dist-url=https://electronjs.org/headers"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "better-sqlite3": "^11.10.0",
+    "better-sqlite3": "^12.8.0",
     "chokidar": "^4.0.3",
     "electron-store": "^8.2.0",
     "mammoth": "^1.12.0",
     "pdf-parse": "^2.2.2"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
     "@types/better-sqlite3": "^7.6.13",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
