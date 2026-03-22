@@ -1,157 +1,32 @@
 import { basename, extname } from 'path'
+import { getRules } from './database'
 import type {
   DocumentType,
   ClassificationResult,
   ExtractedFields,
   ExtractionResult,
+  Rule,
 } from '../shared/types'
-
-interface DocumentRule {
-  type: DocumentType
-  keywords: RegExp[]
-  minKeywords: number
-  confidenceMap: Record<number, number> // matchCount → confidence
-  folderTemplate: string
-  nameTemplate: string
-}
-
-const RULES: DocumentRule[] = [
-  {
-    type: 'lohnabrechnung',
-    keywords: [
-      /lohnabrechnung|gehaltsabrechnung|entgeltabrechnung/i,
-      /bruttolohn|bruttoverdienst|bruttogehalt/i,
-      /nettolohn|nettoverdienst|nettogehalt/i,
-      /steuerklasse|lohnsteuer/i,
-      /sozialversicherung|krankenversicherung|rentenversicherung/i,
-      /arbeitgeber|personalnummer/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.8, 3: 0.95 },
-    folderTemplate: 'Finanzen/Gehaltsabrechnungen/{YYYY}/',
-    nameTemplate: 'Lohnabrechnung_{Date}',
-  },
-  {
-    type: 'rechnung',
-    keywords: [
-      /rechnungsnummer|rechnung\s*nr|invoice\s*no/i,
-      /rechnungsdatum|invoice\s*date/i,
-      /gesamtbetrag|gesamtsumme|total|nettobetrag/i,
-      /mehrwertsteuer|mwst|ust|umsatzsteuer|vat/i,
-      /zahlungsziel|f[äa]llig|due\s*date/i,
-      /bankverbindung|iban|bic/i,
-      /steuernummer|ust[-.]?id/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 1: 0.4, 2: 0.7, 3: 0.9 },
-    folderTemplate: 'Finanzen/Rechnungen/{YYYY}/',
-    nameTemplate: 'Rechnung_{Sender}_{Date}',
-  },
-  {
-    type: 'vertrag',
-    keywords: [
-      /vertragsnummer|vertrag\s*nr|contract/i,
-      /vertragspartner|vertragsparteien/i,
-      /k[üu]ndigungsfrist|k[üu]ndigung/i,
-      /laufzeit|vertragsdauer|vertragslaufzeit/i,
-      /unterschrift|signature/i,
-      /vereinbar(?:en|ung)|agreement/i,
-      /mietvertrag|arbeitsvertrag|kaufvertrag/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.7, 3: 0.9 },
-    folderTemplate: 'Verträge/',
-    nameTemplate: 'Vertrag_{Sender}_{Date}',
-  },
-  {
-    type: 'kontoauszug',
-    keywords: [
-      /kontoauszug|account\s*statement/i,
-      /kontostand|saldo|balance/i,
-      /iban\s*:?\s*[A-Z]{2}\d{2}/i,
-      /buchungstag|wertstellung|valuta/i,
-      /haben|soll|credit|debit/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.7, 3: 0.9 },
-    folderTemplate: 'Finanzen/Kontoauszüge/{YYYY}/',
-    nameTemplate: 'Kontoauszug_{Sender}_{Date}',
-  },
-  {
-    type: 'quittung',
-    keywords: [
-      /quittung|receipt|kassenbon|kassenzettel/i,
-      /bar\s*erhalten|bezahlt|paid/i,
-      /summe|total|gesamt/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.8, 3: 0.9 },
-    folderTemplate: 'Finanzen/Quittungen/{YYYY}/',
-    nameTemplate: 'Quittung_{Sender}_{Date}',
-  },
-  {
-    type: 'bescheinigung',
-    keywords: [
-      /bescheinigung|bestätigung|certificate|attestation/i,
-      /hiermit\s*(wird\s*)?bestätigt/i,
-      /nachweis|zuständig/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.7, 3: 0.85 },
-    folderTemplate: 'Dokumente/Bescheinigungen/',
-    nameTemplate: 'Bescheinigung_{Sender}_{Date}',
-  },
-  {
-    type: 'brief',
-    keywords: [
-      /sehr\s*geehrte|dear\s+(?:sir|madam|mr|ms)/i,
-      /mit\s*freundlichen\s*gr[üu]ßen|with\s*kind\s*regards/i,
-      /betreff|subject|anlage|attachment/i,
-    ],
-    minKeywords: 2,
-    confidenceMap: { 2: 0.6, 3: 0.75 },
-    folderTemplate: 'Dokumente/Briefe/{YYYY}/',
-    nameTemplate: 'Brief_{Sender}_{Date}',
-  },
-]
 
 // --- Field extraction ---
 
 const DATE_PATTERNS = [
-  // DD.MM.YYYY or DD/MM/YYYY
   /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/,
-  // YYYY-MM-DD
   /(\d{4})-(\d{1,2})-(\d{1,2})/,
-  // DD.MM.YY
   /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2})(?!\d)/,
 ]
 
 function extractDate(text: string, filename: string): string | undefined {
-  // Try text content first
-  for (const pattern of DATE_PATTERNS) {
-    const match = text.match(pattern)
-    if (!match) continue
-
-    const parts = match.slice(1).map(Number)
-    if (parts[0] > 1000) {
-      // YYYY-MM-DD
-      return formatDate(parts[0], parts[1], parts[2])
+  for (const source of [text, filename]) {
+    for (const pattern of DATE_PATTERNS) {
+      const match = source.match(pattern)
+      if (!match) continue
+      const parts = match.slice(1).map(Number)
+      if (parts[0] > 1000) return formatDate(parts[0], parts[1], parts[2])
+      const year = parts[2] < 100 ? 2000 + parts[2] : parts[2]
+      return formatDate(year, parts[1], parts[0])
     }
-    // DD.MM.YYYY or DD.MM.YY
-    const year = parts[2] < 100 ? 2000 + parts[2] : parts[2]
-    return formatDate(year, parts[1], parts[0])
   }
-
-  // Try filename
-  for (const pattern of DATE_PATTERNS) {
-    const match = filename.match(pattern)
-    if (!match) continue
-    const parts = match.slice(1).map(Number)
-    if (parts[0] > 1000) return formatDate(parts[0], parts[1], parts[2])
-    const year = parts[2] < 100 ? 2000 + parts[2] : parts[2]
-    return formatDate(year, parts[1], parts[0])
-  }
-
   return undefined
 }
 
@@ -169,13 +44,12 @@ function extractAmount(text: string): string | undefined {
 
 const SENDER_PATTERNS = [
   /(?:von|from|absender)[:\s]+(.+)/i,
-  /^(.+?)(?:\n|$)/,  // first line
+  /^(.+?)(?:\n|$)/,
 ]
 
 const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG)\s*/gi
 
 function extractSender(text: string): string | undefined {
-  // Try explicit sender patterns
   for (const pattern of SENDER_PATTERNS) {
     const match = text.match(pattern)
     if (match && match[1]) {
@@ -184,11 +58,9 @@ function extractSender(text: string): string | undefined {
     }
   }
 
-  // Try company suffix detection
   const companyMatch = text.match(/(\S+(?:\s+\S+){0,3})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc)/i)
   if (companyMatch) return cleanSender(companyMatch[1])
 
-  // Try email domain
   const emailMatch = text.match(/@([\w.-]+)\.\w+/)
   if (emailMatch) return emailMatch[1].split('.')[0]
 
@@ -212,36 +84,24 @@ const REFERENCE_PATTERNS: Record<string, RegExp> = {
   vertrag: /(?:vertragsnr|vertrag\s*nr|contract\s*(?:no|nr)?)[.:\s]*([A-Z0-9][\w-]*)/i,
 }
 
-function extractReference(text: string, type: DocumentType): string | undefined {
-  const pattern = REFERENCE_PATTERNS[type]
-  if (!pattern) return undefined
-  const match = text.match(pattern)
-  return match ? match[1] : undefined
-}
-
 function extractFields(text: string, filename: string, type: DocumentType): ExtractedFields {
   return {
     date: extractDate(text, filename),
     amount: extractAmount(text),
     sender: extractSender(text),
-    reference: extractReference(text, type),
+    reference: REFERENCE_PATTERNS[type]
+      ? text.match(REFERENCE_PATTERNS[type])?.[1]
+      : undefined,
   }
 }
 
 // --- Name/folder generation ---
 
 function sanitizeFilename(name: string): string {
-  return name
-    .replace(/[<>:"/\\|?*]/g, '')
-    .replace(/\s+/g, '_')
-    .trim()
+  return name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_').trim()
 }
 
-function buildSuggestedName(
-  template: string,
-  fields: ExtractedFields,
-  ext: string,
-): string {
+function buildSuggestedName(template: string, fields: ExtractedFields, ext: string): string {
   let name = template
 
   if (fields.sender) {
@@ -263,6 +123,39 @@ function buildSuggestedName(
 function buildSuggestedFolder(template: string, fields: ExtractedFields): string {
   const year = fields.date ? fields.date.slice(0, 4) : String(new Date().getFullYear())
   return template.replace('{YYYY}', year)
+}
+
+// --- Rule matching ---
+
+function matchSimpleRule(rule: Rule, text: string): number {
+  const keywords = rule.pattern
+    .split(',')
+    .map((k) => k.trim().toLowerCase())
+    .filter(Boolean)
+
+  let count = 0
+  for (const kw of keywords) {
+    if (text.includes(kw)) count++
+  }
+  return count
+}
+
+function matchRegexRule(rule: Rule, text: string): number {
+  try {
+    const re = new RegExp(rule.pattern, 'i')
+    return re.test(text) ? 1 : 0
+  } catch {
+    console.error(`[Classifier] Invalid regex in rule ${rule.id}: ${rule.pattern}`)
+    return 0
+  }
+}
+
+function computeConfidence(matchCount: number, minMatches: number, totalKeywords: number): number {
+  if (matchCount < minMatches) return 0
+  const ratio = totalKeywords > 0 ? matchCount / totalKeywords : 0
+  if (ratio >= 0.5) return 0.9
+  if (matchCount >= minMatches + 1) return 0.8
+  return 0.7
 }
 
 // --- Classification for images without text ---
@@ -302,32 +195,40 @@ export function classify(
   }
 
   const text = extraction.text
+  const dbRules = getRules().filter((r) => r.isActive)
+
   let bestResult: ClassificationResult | null = null
   let bestConfidence = 0
 
-  for (const rule of RULES) {
-    let matchCount = 0
-    for (const kw of rule.keywords) {
-      if (kw.test(text)) matchCount++
+  for (const rule of dbRules) {
+    let matchCount: number
+    let totalKeywords: number
+
+    if (rule.ruleType === 'regex') {
+      matchCount = matchRegexRule(rule, text)
+      totalKeywords = 1
+    } else {
+      matchCount = matchSimpleRule(rule, text)
+      totalKeywords = rule.pattern.split(',').filter((k) => k.trim()).length
     }
 
-    if (matchCount < rule.minKeywords) continue
+    const minMatches = rule.ruleType === 'regex' ? 1 : rule.minMatches
+    if (matchCount < minMatches) continue
 
-    // Find the highest confidence tier that applies
-    let confidence = 0
-    for (const [threshold, conf] of Object.entries(rule.confidenceMap)) {
-      if (matchCount >= Number(threshold)) confidence = Math.max(confidence, conf)
-    }
+    const confidence = rule.ruleType === 'regex'
+      ? 0.85
+      : computeConfidence(matchCount, minMatches, totalKeywords)
 
     if (confidence > bestConfidence) {
-      const fields = extractFields(text, basename(filename, ext), rule.type)
+      const type = rule.documentType as DocumentType
+      const fields = extractFields(text, basename(filename, ext), type)
       bestConfidence = confidence
       bestResult = {
-        type: rule.type,
+        type,
         confidence,
         fields,
         suggestedName: buildSuggestedName(rule.nameTemplate, fields, ext),
-        suggestedFolder: buildSuggestedFolder(rule.folderTemplate, fields),
+        suggestedFolder: buildSuggestedFolder(rule.targetFolder, fields),
       }
     }
   }
@@ -336,7 +237,6 @@ export function classify(
     return bestResult
   }
 
-  // Fallback
   return {
     type: 'sonstiges',
     confidence: 0,

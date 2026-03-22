@@ -36,7 +36,18 @@
     "save": "Save",
     "cancel": "Cancel",
     "enable": "Enable",
-    "disable": "Disable"
+    "disable": "Disable",
+    "delete": "Delete",
+    "addRule": "+ Add rule",
+    "type": "Type:",
+    "typeSimple": "Keywords",
+    "typeRegex": "Regex",
+    "pattern": "Pattern:",
+    "patternHintSimple": "Comma-separated keywords",
+    "patternHintRegex": "Regular expression (without delimiters)",
+    "minMatches": "Min. matches:",
+    "docType": "Document type:",
+    "confirmDelete": "Delete this rule?"
   },
   "history": {
     "title": "History",

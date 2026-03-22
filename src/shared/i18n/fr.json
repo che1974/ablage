@@ -36,7 +36,18 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "enable": "Activer",
-    "disable": "Désactiver"
+    "disable": "Désactiver",
+    "delete": "Supprimer",
+    "addRule": "+ Ajouter une règle",
+    "type": "Type :",
+    "typeSimple": "Mots-clés",
+    "typeRegex": "Regex",
+    "pattern": "Motif :",
+    "patternHintSimple": "Mots-clés séparés par des virgules",
+    "patternHintRegex": "Expression régulière (sans délimiteurs)",
+    "minMatches": "Corresp. min. :",
+    "docType": "Type de document :",
+    "confirmDelete": "Supprimer cette règle ?"
   },
   "history": {
     "title": "Historique",

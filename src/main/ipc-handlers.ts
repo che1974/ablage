@@ -5,7 +5,7 @@ import { acceptSuggestion, skipSuggestionHandler, undoOperation } from './pipeli
 import { rebuildMenu } from './tray'
 import { getPendingQueue } from './notifications'
 import { setLocale, t, type Locale } from '../shared/i18n'
-import type { MoveSuggestion } from '../shared/types'
+import type { MoveSuggestion, Rule } from '../shared/types'
 
 export function registerIpcHandlers(): void {
   ipcMain.handle('get-watch-folders', () => {
@@ -47,12 +47,20 @@ export function registerIpcHandlers(): void {
     return db.getRules()
   })
 
-  ipcMain.handle('update-rule', (_event, id: number, targetFolder: string, nameTemplate: string) => {
-    db.updateRule(id, targetFolder, nameTemplate)
+  ipcMain.handle('update-rule', (_event, id: number, update: Partial<Omit<Rule, 'id'>>) => {
+    db.updateRule(id, update)
   })
 
   ipcMain.handle('toggle-rule', (_event, id: number, isActive: boolean) => {
     db.toggleRule(id, isActive)
+  })
+
+  ipcMain.handle('add-rule', (_event, rule: Omit<Rule, 'id'>) => {
+    db.addRule(rule)
+  })
+
+  ipcMain.handle('delete-rule', (_event, id: number) => {
+    db.deleteRule(id)
   })
 
   ipcMain.handle('accept-suggestion', async (_event, suggestion: MoveSuggestion) => {

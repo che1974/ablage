@@ -342,6 +342,16 @@ body {
   color: #6b7280;
 }
 
+.rule-badge.simple {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.rule-badge.regex {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 .rule-details {
   font-size: 12px;
   color: #666;
@@ -404,6 +414,40 @@ body {
   display: flex;
   gap: 6px;
   margin-top: 4px;
+}
+
+.rule-edit-hint {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.rule-edit-narrow {
+  max-width: 80px;
+}
+
+.rule-type-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.rule-pattern-value {
+  font-family: 'SF Mono', Monaco, Menlo, monospace;
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.rule-item-new {
+  border-color: #2563eb;
+  border-style: dashed;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
 }
 
 /* History */

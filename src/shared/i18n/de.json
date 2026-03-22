@@ -36,7 +36,18 @@
     "save": "Speichern",
     "cancel": "Abbrechen",
     "enable": "Aktivieren",
-    "disable": "Deaktivieren"
+    "disable": "Deaktivieren",
+    "delete": "Löschen",
+    "addRule": "+ Regel hinzufügen",
+    "type": "Typ:",
+    "typeSimple": "Schlüsselwörter",
+    "typeRegex": "Regex",
+    "pattern": "Muster:",
+    "patternHintSimple": "Kommagetrennte Schlüsselwörter",
+    "patternHintRegex": "Regulärer Ausdruck (ohne Begrenzer)",
+    "minMatches": "Min. Treffer:",
+    "docType": "Dokumenttyp:",
+    "confirmDelete": "Diese Regel löschen?"
   },
   "history": {
     "title": "Verlauf",

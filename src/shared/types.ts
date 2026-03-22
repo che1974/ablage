@@ -69,11 +69,16 @@ export interface HistoryEntry {
   createdAt: string
 }
 
+export type RuleType = 'simple' | 'regex'
+
 export interface Rule {
   id: number
   documentType: DocumentType
   targetFolder: string
   nameTemplate: string
+  ruleType: RuleType
+  pattern: string
+  minMatches: number
   isActive: boolean
 }
 
@@ -84,8 +89,10 @@ export interface IpcApi {
   getHistory: () => Promise<HistoryEntry[]>
   undoOperation: (id: number) => Promise<void>
   getRules: () => Promise<Rule[]>
-  updateRule: (id: number, targetFolder: string, nameTemplate: string) => Promise<void>
+  updateRule: (id: number, update: Partial<Omit<Rule, 'id'>>) => Promise<void>
   toggleRule: (id: number, isActive: boolean) => Promise<void>
+  addRule: (rule: Omit<Rule, 'id'>) => Promise<void>
+  deleteRule: (id: number) => Promise<void>
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => void
   acceptSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   skipSuggestion: (suggestion: MoveSuggestion) => Promise<void>

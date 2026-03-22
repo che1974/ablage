@@ -36,7 +36,18 @@
     "save": "Зберегти",
     "cancel": "Скасувати",
     "enable": "Увімкнути",
-    "disable": "Вимкнути"
+    "disable": "Вимкнути",
+    "delete": "Видалити",
+    "addRule": "+ Додати правило",
+    "type": "Тип:",
+    "typeSimple": "Ключові слова",
+    "typeRegex": "Regex",
+    "pattern": "Шаблон:",
+    "patternHintSimple": "Ключові слова через кому",
+    "patternHintRegex": "Регулярний вираз (без обмежувачів)",
+    "minMatches": "Мін. збігів:",
+    "docType": "Тип документа:",
+    "confirmDelete": "Видалити це правило?"
   },
   "history": {
     "title": "Історія",
