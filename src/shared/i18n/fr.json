@@ -47,7 +47,26 @@
     "patternHintRegex": "Expression régulière (sans délimiteurs)",
     "minMatches": "Corresp. min. :",
     "docType": "Type de document :",
-    "confirmDelete": "Supprimer cette règle ?"
+    "confirmDelete": "Supprimer cette règle ?",
+    "wizard": {
+      "title": "Nouvelle règle",
+      "step": "Étape {current} sur {total}",
+      "next": "Suivant",
+      "back": "Retour",
+      "create": "Créer la règle",
+      "step1title": "Quel type de document ?",
+      "step1hint": "Choisissez la catégorie de documents que cette règle reconnaîtra. Les fichiers détectés seront marqués avec ce type.",
+      "step2title": "Comment le reconnaître ?",
+      "step2hint": "Définissez la méthode de détection. Les mots-clés vérifient la présence de termes dans le texte. Regex utilise un motif pour une détection avancée.",
+      "step2simpleHint": "Entrez les mots typiques de ce type de document. Plus il y a de mots-clés, plus la détection est précise. Un fichier est classé lorsque le nombre minimum de correspondances est atteint.",
+      "step2regexHint": "Entrez une expression régulière sans délimiteurs. La casse est ignorée. Exemple : facture.*total.*\\d+",
+      "step3title": "Où le ranger ?",
+      "step3hint": "Définissez le dossier cible et le modèle de nom. Utilisez {YYYY} dans le chemin pour un tri automatique par année.",
+      "step3folderHint": "Chemin du dossier. {YYYY} est remplacé par l'année. Exemple : Finance/Invoices/{YYYY}/",
+      "step3nameHint": "Modèle de nom. Variables disponibles : {Sender}, {Date}. Exemple : Invoice_{Sender}_{Date}",
+      "step4title": "Vérification",
+      "step4hint": "Vérifiez les paramètres avant de créer la règle. Vous pourrez toujours la modifier ou la désactiver plus tard."
+    }
   },
   "history": {
     "title": "Historique",

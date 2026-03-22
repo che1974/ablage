@@ -47,7 +47,26 @@
     "patternHintRegex": "Regular expression (without delimiters)",
     "minMatches": "Min. matches:",
     "docType": "Document type:",
-    "confirmDelete": "Delete this rule?"
+    "confirmDelete": "Delete this rule?",
+    "wizard": {
+      "title": "New Rule",
+      "step": "Step {current} of {total}",
+      "next": "Next",
+      "back": "Back",
+      "create": "Create rule",
+      "step1title": "What type of document?",
+      "step1hint": "Choose the category for documents this rule will match. When a file is classified, it will be tagged with this type.",
+      "step2title": "How to recognize it?",
+      "step2hint": "Define the matching method. Keywords mode checks if the document text contains specific words. Regex mode uses a pattern for advanced matching.",
+      "step2simpleHint": "Enter words that typically appear in this type of document. The more keywords, the more accurate the match. A file is classified when the minimum number of keywords is found.",
+      "step2regexHint": "Enter a regular expression without delimiters. The pattern is case-insensitive. Example: invoice.*total.*\\d+",
+      "step3title": "Where to put it?",
+      "step3hint": "Set the destination folder and filename pattern. Use {YYYY} in the folder path for automatic year-based sorting.",
+      "step3folderHint": "Folder path. Use {YYYY} for year substitution. Example: Finance/Invoices/{YYYY}/",
+      "step3nameHint": "Filename template. Available placeholders: {Sender}, {Date}. Example: Invoice_{Sender}_{Date}",
+      "step4title": "Review",
+      "step4hint": "Check the rule settings before creating. You can always edit or disable it later."
+    }
   },
   "history": {
     "title": "History",

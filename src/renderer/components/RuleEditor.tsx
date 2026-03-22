@@ -38,37 +38,30 @@ function ruleToEdit(rule: Rule): EditState {
   }
 }
 
-export default function RuleEditor() {
+interface Props {
+  onOpenWizard: () => void
+}
+
+export default function RuleEditor({ onOpenWizard }: Props) {
   const { t } = useI18n()
   const [rules, setRules] = useState<Rule[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [adding, setAdding] = useState(false)
   const [edit, setEdit] = useState<EditState>(emptyEdit())
 
   const load = () => window.ablage.getRules().then(setRules)
   useEffect(() => { load() }, [])
 
   const startEdit = (rule: Rule) => {
-    setAdding(false)
     setEditingId(rule.id)
     setEdit(ruleToEdit(rule))
   }
 
-  const startAdd = () => {
-    setEditingId(null)
-    setAdding(true)
-    setEdit(emptyEdit())
-  }
-
   const cancel = () => {
     setEditingId(null)
-    setAdding(false)
   }
 
   const save = async () => {
-    if (adding) {
-      await window.ablage.addRule({ ...edit, isActive: true })
-    } else if (editingId !== null) {
+    if (editingId !== null) {
       await window.ablage.updateRule(editingId, edit)
     }
     cancel()
@@ -189,7 +182,7 @@ export default function RuleEditor() {
         <h2 className="section-title">{t('rules.title')}</h2>
         <p className="section-text" style={{ marginBottom: 16 }}>{t('rules.hint')}</p>
 
-        {rules.length === 0 && !adding ? (
+        {rules.length === 0 ? (
           <p className="empty-state">{t('rules.empty')}</p>
         ) : (
           <ul className="rule-list">
@@ -252,16 +245,11 @@ export default function RuleEditor() {
               </li>
             ))}
 
-            {adding && (
-              <li className="rule-item rule-item-new">
-                {renderForm()}
-              </li>
-            )}
           </ul>
         )}
 
-        {!adding && editingId === null && (
-          <button className="btn btn-secondary" onClick={startAdd}>
+        {editingId === null && (
+          <button className="btn btn-secondary" onClick={onOpenWizard}>
             {t('rules.addRule')}
           </button>
         )}

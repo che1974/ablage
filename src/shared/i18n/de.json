@@ -47,7 +47,26 @@
     "patternHintRegex": "Regulärer Ausdruck (ohne Begrenzer)",
     "minMatches": "Min. Treffer:",
     "docType": "Dokumenttyp:",
-    "confirmDelete": "Diese Regel löschen?"
+    "confirmDelete": "Diese Regel löschen?",
+    "wizard": {
+      "title": "Neue Regel",
+      "step": "Schritt {current} von {total}",
+      "next": "Weiter",
+      "back": "Zurück",
+      "create": "Regel erstellen",
+      "step1title": "Welcher Dokumenttyp?",
+      "step1hint": "Wähle die Kategorie für Dokumente, die diese Regel erkennen soll. Erkannte Dateien werden mit diesem Typ markiert.",
+      "step2title": "Wie erkennen?",
+      "step2hint": "Definiere die Erkennungsmethode. Schlüsselwörter prüfen, ob bestimmte Begriffe im Text vorkommen. Regex nutzt ein Muster für erweiterte Erkennung.",
+      "step2simpleHint": "Gib Wörter ein, die typisch für diesen Dokumenttyp sind. Je mehr Schlüsselwörter, desto genauer die Erkennung. Eine Datei wird klassifiziert, wenn die Mindestanzahl an Treffern erreicht ist.",
+      "step2regexHint": "Gib einen regulären Ausdruck ohne Begrenzer ein. Groß-/Kleinschreibung wird ignoriert. Beispiel: rechnung.*summe.*\\d+",
+      "step3title": "Wohin verschieben?",
+      "step3hint": "Lege Zielordner und Namensschema fest. Nutze {YYYY} im Ordnerpfad für automatische Sortierung nach Jahr.",
+      "step3folderHint": "Ordnerpfad. {YYYY} wird durch das Jahr ersetzt. Beispiel: Finance/Invoices/{YYYY}/",
+      "step3nameHint": "Namensvorlage. Verfügbare Platzhalter: {Sender}, {Date}. Beispiel: Invoice_{Sender}_{Date}",
+      "step4title": "Überprüfung",
+      "step4hint": "Prüfe die Regeleinstellungen vor dem Erstellen. Du kannst sie jederzeit bearbeiten oder deaktivieren."
+    }
   },
   "history": {
     "title": "Verlauf",

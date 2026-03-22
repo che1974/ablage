@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import NotificationPanel from './components/Notification'
 import WatchFolders from './components/Settings'
 import RuleEditor from './components/RuleEditor'
+import RuleWizard from './components/RuleWizard'
 import History from './components/History'
 import Onboarding from './components/Onboarding'
 import { useI18n } from './hooks/useI18n'
@@ -20,6 +21,8 @@ export default function App() {
   const { t } = useI18n()
   const [activeTab, setActiveTab] = useState<Tab>('folders')
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showWizard, setShowWizard] = useState(false)
+  const [rulesKey, setRulesKey] = useState(0)
 
   useEffect(() => {
     window.ablage.getSetting('language').then((lang) => {
@@ -67,17 +70,29 @@ export default function App() {
         <div className="sidebar-footer">
           <button
             className="sidebar-action-btn"
-            onClick={() => { setActiveTab('rules') }}
+            onClick={() => { setActiveTab('rules'); setShowWizard(true) }}
           >
             + {t('rules.addRule').replace('+ ', '')}
           </button>
         </div>
       </aside>
 
+      {showWizard && (
+        <RuleWizard
+          onClose={() => setShowWizard(false)}
+          onCreated={() => setRulesKey((k) => k + 1)}
+        />
+      )}
+
       <div className="main-area">
         <main className="main-content">
           {activeTab === 'folders' && <WatchFolders />}
-          {activeTab === 'rules' && <RuleEditor />}
+          {activeTab === 'rules' && (
+            <RuleEditor
+              key={rulesKey}
+              onOpenWizard={() => setShowWizard(true)}
+            />
+          )}
           {activeTab === 'history' && <History />}
           {activeTab === 'about' && (
             <div className="content-panel">
