@@ -31,6 +31,11 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
+  // Hide dock icon on macOS — app lives in the tray
+  if (process.platform === 'darwin') {
+    app.dock?.hide()
+  }
+
   initDatabase()
 
   const savedLang = getSetting('language', 'en')

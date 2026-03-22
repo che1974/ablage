@@ -7,7 +7,7 @@ import History from './components/History'
 import Guide from './components/Guide'
 import Onboarding from './components/Onboarding'
 import { useI18n } from './hooks/useI18n'
-import { setLocale, type Locale } from '../shared/i18n'
+import { setLocale, getLocale, LOCALE_NAMES, type Locale } from '../shared/i18n'
 
 type Tab = 'folders' | 'rules' | 'history' | 'guide' | 'about'
 
@@ -25,6 +25,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showWizard, setShowWizard] = useState(false)
   const [rulesKey, setRulesKey] = useState(0)
+  const [lang, setLang] = useState<Locale>(getLocale())
 
   useEffect(() => {
     window.ablage.getSetting('language').then((lang) => {
@@ -105,6 +106,25 @@ export default function App() {
                 <h2 className="section-title">{t('app.name')}</h2>
                 <p className="section-text">{t('app.version')}</p>
                 <p className="section-text">{t('app.description')}</p>
+              </section>
+
+              <section className="section">
+                <h2 className="section-label">{t('settings.language')}</h2>
+                <div className="language-select">
+                  {(Object.keys(LOCALE_NAMES) as Locale[]).map((code) => (
+                    <button
+                      key={code}
+                      className={`lang-btn ${lang === code ? 'active' : ''}`}
+                      onClick={() => {
+                        setLang(code)
+                        setLocale(code)
+                        window.ablage.setSetting('language', code)
+                      }}
+                    >
+                      {LOCALE_NAMES[code]}
+                    </button>
+                  ))}
+                </div>
               </section>
 
               <section className="section">

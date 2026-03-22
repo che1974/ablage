@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useI18n } from '../hooks/useI18n'
-import { setLocale, getLocale, LOCALE_NAMES, type Locale } from '../../shared/i18n'
 
 export default function WatchFolders() {
   const { t } = useI18n()
   const [folders, setFolders] = useState<string[]>([])
   const [baseDir, setBaseDir] = useState<string>('')
-  const [lang, setLang] = useState<Locale>(getLocale())
 
   useEffect(() => {
     window.ablage.getWatchFolders().then(setFolders)
@@ -30,29 +28,8 @@ export default function WatchFolders() {
     if (dir) setBaseDir(dir)
   }
 
-  const handleLanguageChange = async (newLang: Locale) => {
-    setLang(newLang)
-    setLocale(newLang)
-    await window.ablage.setSetting('language', newLang)
-  }
-
   return (
     <div className="content-panel">
-      <section className="section">
-        <h2 className="section-label">{t('settings.language')}</h2>
-        <div className="language-select">
-          {(Object.keys(LOCALE_NAMES) as Locale[]).map((code) => (
-            <button
-              key={code}
-              className={`lang-btn ${lang === code ? 'active' : ''}`}
-              onClick={() => handleLanguageChange(code)}
-            >
-              {LOCALE_NAMES[code]}
-            </button>
-          ))}
-        </div>
-      </section>
-
       <section className="section">
         <h2 className="section-label">{t('folders.baseDir')}</h2>
         <div className="folder-card">
