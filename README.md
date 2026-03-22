@@ -4,6 +4,21 @@ Desktop app for automatic document organization. Monitors folders, analyzes file
 
 Built for the DE/EU market — recognizes German document types (invoices, contracts, payslips, bank statements, etc.) using keyword and regex matching.
 
+No cloud services, no AI APIs. Everything runs locally.
+
+## Download
+
+Pre-built binaries are available on the [Releases](https://github.com/che1974/ablage/releases) page.
+
+| Platform | File | Notes |
+|----------|------|-------|
+| macOS (Apple Silicon) | `Ablage-*-mac-arm64.dmg` | M1/M2/M3/M4 |
+| macOS (Intel) | `Ablage-*-mac-x64.dmg` | 2015+ Macs |
+| Windows | `Ablage-*-win-x64.exe` | Installer (NSIS) |
+| Windows (portable) | `Ablage-*-win-x64.exe` | No installation needed |
+| Linux | `Ablage-*-linux-x64.AppImage` | Most distros |
+| Linux (Debian/Ubuntu) | `Ablage-*-linux-x64.deb` | apt-compatible |
+
 ## How It Works
 
 1. **Watch** — monitors configured folders for new PDF, DOCX, JPG, PNG files
@@ -12,29 +27,7 @@ Built for the DE/EU market — recognizes German document types (invoices, contr
 4. **Suggest** — shows a notification with the detected type, proposed filename, and target folder
 5. **Move** — on user confirmation, renames and moves the file. Full undo support.
 
-No cloud services, no AI APIs. Everything runs locally.
-
-## Stack
-
-- Electron 41 + React 19 + TypeScript 5
-- Vite + vite-plugin-electron
-- SQLite (better-sqlite3) for rules, history, settings
-- chokidar for file watching
-- pdf-parse for PDF text extraction
-- mammoth for DOCX text extraction
-
 ## Getting Started
-
-```bash
-# Install dependencies
-npm install
-
-# Rebuild native modules for Electron
-npm run rebuild-sqlite
-
-# Run in development mode
-npm run dev
-```
 
 ### First Launch
 
@@ -42,6 +35,69 @@ npm run dev
 2. Add **watched folders** — directories to monitor (e.g. Downloads)
 3. Drop a document into a watched folder — a suggestion notification appears within seconds
 4. Click **Apply** to move, or **Skip** to ignore
+
+## Building from Source
+
+### Prerequisites
+
+- Node.js 20+
+- npm 9+
+- Python 3 and C++ build tools (for native SQLite module)
+
+Platform-specific requirements:
+
+| Platform | Additional requirements |
+|----------|----------------------|
+| macOS | Xcode Command Line Tools (`xcode-select --install`) |
+| Windows | Visual Studio Build Tools with "Desktop development with C++" |
+| Linux (Ubuntu/Debian) | `sudo apt install build-essential python3 libsqlite3-dev rpm` |
+| Linux (Fedora) | `sudo dnf install gcc-c++ make python3 sqlite-devel` |
+
+### Development
+
+```bash
+git clone https://github.com/che1974/ablage.git
+cd ablage
+npm install
+npm run rebuild-sqlite
+npm run dev
+```
+
+### Building for Your Platform
+
+```bash
+# Build distributable for current OS
+npm run dist
+```
+
+Output goes to `release/` directory.
+
+### Building for a Specific Platform
+
+```bash
+# macOS (from macOS only)
+npx electron-builder --mac --arm64
+npx electron-builder --mac --x64
+
+# Windows (from Windows, or macOS/Linux with Wine)
+npx electron-builder --win --x64
+
+# Linux (from Linux only)
+npx electron-builder --linux --x64
+```
+
+### Cross-Compilation Notes
+
+- **macOS** builds can only be produced on macOS (code signing requirement)
+- **Windows** builds can be produced on macOS/Linux if Wine is installed
+- **Linux** builds can be produced on any platform
+
+For automated multi-platform builds, push a version tag — GitHub Actions will build for all platforms and create a release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
 
 ## Scripts
 
@@ -52,6 +108,15 @@ npm run dev
 | `npm run dist` | Build + package with electron-builder |
 | `npm run typecheck` | Type-check without emitting |
 | `npm run rebuild-sqlite` | Rebuild better-sqlite3 for Electron |
+
+## Stack
+
+- Electron 41 + React 19 + TypeScript 5
+- Vite + vite-plugin-electron
+- SQLite (better-sqlite3) for rules, history, settings
+- chokidar for file watching
+- pdf-parse for PDF text extraction
+- mammoth for DOCX text extraction
 
 ## Rule System
 
