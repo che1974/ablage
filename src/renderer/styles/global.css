@@ -130,41 +130,6 @@ body {
   min-width: 0;
 }
 
-.topbar {
-  background: #fff;
-  border-bottom: 1px solid #e5e5ea;
-  padding: 0 28px;
-  display: flex;
-  align-items: flex-end;
-  height: 48px;
-}
-
-.topbar-tabs {
-  display: flex;
-  gap: 6px;
-}
-
-.topbar-tab {
-  padding: 10px 16px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 13px;
-  color: #86868b;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
-  font-weight: 500;
-}
-
-.topbar-tab:hover {
-  color: #1d1d1f;
-}
-
-.topbar-tab.active {
-  color: #4a6cf7;
-  border-bottom-color: #4a6cf7;
-}
-
 .main-content {
   flex: 1;
   padding: 28px;

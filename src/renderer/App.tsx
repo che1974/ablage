@@ -75,20 +75,6 @@ export default function App() {
       </aside>
 
       <div className="main-area">
-        <header className="topbar">
-          <nav className="topbar-tabs">
-            {(['folders', 'rules', 'history', 'about'] as Tab[]).map((tab) => (
-              <button
-                key={tab}
-                className={`topbar-tab ${activeTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {t(`tabs.${tab}`)}
-              </button>
-            ))}
-          </nav>
-        </header>
-
         <main className="main-content">
           {activeTab === 'folders' && <WatchFolders />}
           {activeTab === 'rules' && <RuleEditor />}
