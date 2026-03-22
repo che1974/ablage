@@ -81,19 +81,19 @@ function seedDefaultRules(): void {
   )
 
   const defaults: [string, string, string, string, string, number][] = [
-    ['rechnung', 'Finanzen/Rechnungen/{YYYY}/', 'Rechnung_{Sender}_{Date}', 'simple',
+    ['rechnung', 'Finance/Invoices/{YYYY}/', 'Invoice_{Sender}_{Date}', 'simple',
       'rechnungsnummer, rechnung nr, invoice, rechnungsdatum, gesamtbetrag, mehrwertsteuer, mwst, ust, zahlungsziel, steuernummer', 2],
-    ['vertrag', 'Verträge/', 'Vertrag_{Sender}_{Date}', 'simple',
+    ['vertrag', 'Contracts/', 'Contract_{Sender}_{Date}', 'simple',
       'vertragsnummer, vertrag nr, contract, vertragspartner, kündigungsfrist, kündigung, laufzeit, vertragsdauer, mietvertrag, arbeitsvertrag, kaufvertrag', 2],
-    ['lohnabrechnung', 'Finanzen/Gehaltsabrechnungen/{YYYY}/', 'Lohnabrechnung_{Date}', 'simple',
+    ['lohnabrechnung', 'Finance/Payslips/{YYYY}/', 'Payslip_{Date}', 'simple',
       'lohnabrechnung, gehaltsabrechnung, entgeltabrechnung, bruttolohn, nettolohn, steuerklasse, lohnsteuer, sozialversicherung, personalnummer', 2],
-    ['kontoauszug', 'Finanzen/Kontoauszüge/{YYYY}/', 'Kontoauszug_{Sender}_{Date}', 'simple',
+    ['kontoauszug', 'Finance/Statements/{YYYY}/', 'Statement_{Sender}_{Date}', 'simple',
       'kontoauszug, account statement, kontostand, saldo, buchungstag, wertstellung, haben, soll', 2],
-    ['quittung', 'Finanzen/Quittungen/{YYYY}/', 'Quittung_{Sender}_{Date}', 'simple',
+    ['quittung', 'Finance/Receipts/{YYYY}/', 'Receipt_{Sender}_{Date}', 'simple',
       'quittung, receipt, kassenbon, kassenzettel, bar erhalten, bezahlt', 2],
-    ['bescheinigung', 'Dokumente/Bescheinigungen/', 'Bescheinigung_{Sender}_{Date}', 'simple',
+    ['bescheinigung', 'Documents/Certificates/', 'Certificate_{Sender}_{Date}', 'simple',
       'bescheinigung, bestätigung, certificate, attestation, hiermit bestätigt, nachweis', 2],
-    ['brief', 'Dokumente/Briefe/{YYYY}/', 'Brief_{Sender}_{Date}', 'simple',
+    ['brief', 'Documents/Letters/{YYYY}/', 'Letter_{Sender}_{Date}', 'simple',
       'sehr geehrte, dear sir, dear madam, mit freundlichen grüßen, with kind regards, betreff, anlage', 2],
   ]
 

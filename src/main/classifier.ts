@@ -162,14 +162,14 @@ function computeConfidence(matchCount: number, minMatches: number, totalKeywords
 
 function classifyByFilename(filename: string): ClassificationResult {
   const lower = filename.toLowerCase()
-  let folder = 'Dokumente/Sonstiges/'
+  let folder = 'Documents/Other/'
   const ext = extname(filename)
   const name = basename(filename, ext)
 
   if (/scan|foto|photo/.test(lower)) {
-    folder = 'Dokumente/Scans/'
+    folder = 'Documents/Scans/'
   } else if (/^(img|dsc|screenshot)/i.test(lower)) {
-    folder = `Bilder/${new Date().getFullYear()}/`
+    folder = `Pictures/${new Date().getFullYear()}/`
   }
 
   return {
@@ -242,6 +242,6 @@ export function classify(
     confidence: 0,
     fields: extractFields(text, basename(filename, ext), 'sonstiges'),
     suggestedName: filename,
-    suggestedFolder: 'Dokumente/Sonstiges/',
+    suggestedFolder: 'Documents/Other/',
   }
 }
