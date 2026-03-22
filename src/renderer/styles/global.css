@@ -165,3 +165,268 @@ body {
 .btn-secondary:hover {
   background: #e0e0e0;
 }
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.btn-icon {
+  border: none;
+  background: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.btn-icon:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Settings panels */
+
+.settings-panel {
+  max-width: 600px;
+}
+
+.settings-section {
+  margin-bottom: 28px;
+}
+
+.settings-section h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.settings-hint {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.empty-state {
+  color: #999;
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+/* Watch folders */
+
+.base-dir-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.base-dir-path {
+  flex: 1;
+  font-size: 13px;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-list {
+  list-style: none;
+  margin-bottom: 12px;
+}
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.folder-path {
+  font-size: 13px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supported-formats {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+/* Rules */
+
+.rule-list {
+  list-style: none;
+}
+
+.rule-item {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.rule-item.rule-disabled {
+  opacity: 0.5;
+}
+
+.rule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rule-type {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.rule-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.rule-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rule-badge.inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.rule-details {
+  font-size: 12px;
+  color: #666;
+}
+
+.rule-row {
+  display: flex;
+  gap: 6px;
+  line-height: 1.6;
+}
+
+.rule-label {
+  color: #999;
+  min-width: 50px;
+}
+
+/* History */
+
+.history-group {
+  margin-bottom: 20px;
+}
+
+.history-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.history-list {
+  list-style: none;
+}
+
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.history-status {
+  padding-top: 4px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.completed {
+  background: #22c55e;
+}
+
+.status-dot.skipped {
+  background: #f59e0b;
+}
+
+.status-dot.undone {
+  background: #94a3b8;
+}
+
+.history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-filename {
+  font-size: 13px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-path {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-type {
+  display: inline-block;
+  font-size: 10px;
+  color: #666;
+  background: #f3f4f6;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+/* About */
+
+.about-panel {
+  max-width: 400px;
+}
+
+.about-panel h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.about-panel p {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+}
