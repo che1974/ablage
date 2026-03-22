@@ -23,7 +23,7 @@ export function initDatabase(): void {
       rule_type TEXT NOT NULL DEFAULT 'simple',
       pattern TEXT NOT NULL DEFAULT '',
       min_matches INTEGER NOT NULL DEFAULT 2,
-      is_active INTEGER DEFAULT 1,
+      is_active INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -56,6 +56,7 @@ export function initDatabase(): void {
   migrateRules()
   migrateRulePatterns()
   migrateRuleTemplates()
+  migrateDisableDefaults()
   seedDefaultRules()
 }
 
@@ -127,6 +128,15 @@ function migrateRuleTemplates(): void {
   for (const [oldFolder, newFolder, newName] of renames) {
     update.run(newFolder, newName, oldFolder)
   }
+}
+
+function migrateDisableDefaults(): void {
+  if (!db) return
+  const done = db.prepare("SELECT value FROM settings WHERE key = 'migration_disable_defaults'").get()
+  if (done) return
+
+  db.prepare("UPDATE rules SET is_active = 0 WHERE is_active = 1").run()
+  db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_disable_defaults', '1')").run()
 }
 
 function seedDefaultRules(): void {
