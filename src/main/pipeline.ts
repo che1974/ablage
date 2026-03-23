@@ -26,6 +26,11 @@ export async function processFile(event: FileEvent): Promise<void> {
     `[Pipeline] Classified as: ${classification.type} (confidence: ${classification.confidence})`,
   )
 
+  if (classification.type === 'sonstiges' && classification.confidence === 0) {
+    console.log(`[Pipeline] No matching rule for ${event.filename}, skipping notification`)
+    return
+  }
+
   const suggestion: MoveSuggestion = {
     originalPath: event.path,
     suggestedPath: classification.suggestedFolder,
