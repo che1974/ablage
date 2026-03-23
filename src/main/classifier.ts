@@ -51,7 +51,7 @@ const DATE_PATTERNS: DatePattern[] = [
 
 function extractDate(text: string, filename: string): string | undefined {
   // First: try to find a date near a date label (same line or next line)
-  const labelMatch = text.match(/(?:invoice\s*date|date\s*of\s*invoice|date\s*of\s*issue|date\s*:)\s*([^\n]*(?:\n[^\n]*)?)/i)
+  const labelMatch = text.match(/(?:invoice\s*date|date\s*of\s*invoice|date\s*of\s*issue|date\s*:|^date\s)\s*([^\n]*(?:\n[^\n]*)?)/im)
   if (labelMatch) {
     const nearby = labelMatch[1]
     for (const { re, parse } of DATE_PATTERNS) {
