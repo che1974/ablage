@@ -35,9 +35,21 @@ export default function History() {
   const load = () => window.ablage.getHistory().then(setHistory)
   useEffect(() => { load() }, [])
 
+  const [error, setError] = useState<string | null>(null)
+
   const handleUndo = async (id: number) => {
-    await window.ablage.undoOperation(id)
-    load()
+    try {
+      setError(null)
+      await window.ablage.undoOperation(id)
+      load()
+    } catch (err: any) {
+      const msg = err?.message || String(err)
+      if (msg.includes('not found')) {
+        setError(t('history.undoFileNotFound'))
+      } else {
+        setError(msg)
+      }
+    }
   }
 
   const grouped = groupByDate(history, t)
@@ -50,6 +62,16 @@ export default function History() {
           <h2 className="section-title">{t('history.title')}</h2>
         </div>
       </div>
+
+      {error && (
+        <div className="conflict-warning" style={{ marginBottom: 16 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>error</span>
+          {error}
+          <button className="btn-close" onClick={() => setError(null)} style={{ marginLeft: 'auto' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+          </button>
+        </div>
+      )}
 
       {history.length === 0 ? (
         <p className="empty-state">{t('history.empty')}</p>

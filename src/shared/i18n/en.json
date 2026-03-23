@@ -82,7 +82,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "skipped": "Skipped",
-    "undo": "Undo"
+    "undo": "Undo",
+    "undoFileNotFound": "Cannot undo — the file has been moved or deleted outside of Ablage."
   },
   "notification": {
     "detected": "{type} detected",
