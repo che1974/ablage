@@ -16,10 +16,12 @@ const MONTHS: Record<string, number> = {
   jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
 }
 
-const DATE_PATTERNS: Array<{ re: RegExp; parse: (m: RegExpMatchArray) => [number, number, number] | null }> = [
-  // "February 23, 2026" or "Feb 23, 2026"
+type DatePattern = { re: RegExp; parse: (m: RegExpMatchArray) => [number, number, number] | null }
+
+const DATE_PATTERNS: DatePattern[] = [
+  // "February 23, 2026" or "Feb 23 2026"
   {
-    re: /(?:invoice\s*date|date\s*of\s*invoice|date)[:\s]*(\w+)\s+(\d{1,2}),?\s*(\d{4})/i,
+    re: /\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\s+(\d{1,2}),?\s+(\d{4})\b/i,
     parse: (m) => {
       const month = MONTHS[m[1].toLowerCase()]
       return month ? [Number(m[3]), month, Number(m[2])] : null
@@ -27,37 +29,46 @@ const DATE_PATTERNS: Array<{ re: RegExp; parse: (m: RegExpMatchArray) => [number
   },
   // "23 February 2026"
   {
-    re: /(\d{1,2})\s+(\w+)\s+(\d{4})/,
+    re: /\b(\d{1,2})\s+(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\s+(\d{4})\b/i,
     parse: (m) => {
       const month = MONTHS[m[2].toLowerCase()]
       return month ? [Number(m[3]), month, Number(m[1])] : null
     },
   },
   // YYYY-MM-DD
-  { re: /(\d{4})-(\d{1,2})-(\d{1,2})/, parse: (m) => [Number(m[1]), Number(m[2]), Number(m[3])] },
+  { re: /\b(\d{4})-(\d{1,2})-(\d{1,2})\b/, parse: (m) => [Number(m[1]), Number(m[2]), Number(m[3])] },
   // DD.MM.YYYY or DD/MM/YYYY
   {
-    re: /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/,
-    parse: (m) => {
-      const year = Number(m[3])
-      return [year, Number(m[2]), Number(m[1])]
-    },
+    re: /\b(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})\b/,
+    parse: (m) => [Number(m[3]), Number(m[2]), Number(m[1])],
   },
   // DD.MM.YY
   {
-    re: /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2})(?!\d)/,
+    re: /\b(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2})(?!\d)/,
     parse: (m) => [2000 + Number(m[3]), Number(m[2]), Number(m[1])],
   },
 ]
 
 function extractDate(text: string, filename: string): string | undefined {
+  // First: try to find a date near an "invoice date" / "date of invoice" label
+  const labelMatch = text.match(/(?:invoice\s*date|date\s*of\s*invoice|date\s*:)[^\n]*\n?\s*([^\n]+)/i)
+  if (labelMatch) {
+    const nearby = labelMatch[1]
+    for (const { re, parse } of DATE_PATTERNS) {
+      const match = nearby.match(re)
+      if (!match) continue
+      const result = parse(match)
+      if (result) return formatDate(result[0], result[1], result[2])
+    }
+  }
+
+  // Fallback: first date found in text, then filename
   for (const source of [text, filename]) {
     for (const { re, parse } of DATE_PATTERNS) {
       const match = source.match(re)
       if (!match) continue
       const result = parse(match)
-      if (!result) continue
-      return formatDate(result[0], result[1], result[2])
+      if (result) return formatDate(result[0], result[1], result[2])
     }
   }
   return undefined
@@ -82,27 +93,29 @@ function extractAmount(text: string): string | undefined {
   return undefined
 }
 
-const SENDER_PATTERNS = [
-  /(?:customer|payer|client|bill\s*to|billed\s*to|käufer|auftraggeber)[:\s/]*\n?\s*(.+)/i,
-  /(?:von|from|absender|supplier|vendor)[:\s]+(.+)/i,
-]
-
 const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG|LLP|LLC)\s*/gi
 
 function extractSender(text: string): string | undefined {
-  for (const pattern of SENDER_PATTERNS) {
+  // Strategy 1: find company name after "Customer/Payer/Client/Bill to" label
+  // Match the label line, skip everything until the next line with actual content
+  const labelPatterns = [
+    /(?:customer|payer|client|bill\s*to|billed\s*to)[^\n]*\n\s*([A-Z][\w\s.,&-]{2,40})/i,
+    /(?:from|von|absender|supplier|vendor)[:\s]+([A-Z][\w\s.,&-]{2,40})/i,
+  ]
+
+  for (const pattern of labelPatterns) {
     const match = text.match(pattern)
     if (match && match[1]) {
-      const sender = cleanSender(match[1])
+      const sender = cleanSender(match[1].split('\n')[0])
       if (sender.length >= 2) return sender
     }
   }
 
-  // Try company suffix detection
-  const companyMatch = text.match(/(\S+(?:\s+\S+){0,3})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC)/i)
+  // Strategy 2: find company by legal suffix (GmbH, LLP, LLC, Ltd, etc.)
+  const companyMatch = text.match(/([\w][\w\s&.-]{0,30})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC)\b/i)
   if (companyMatch) return cleanSender(companyMatch[1])
 
-  // Try email domain
+  // Strategy 3: email domain
   const emailMatch = text.match(/@([\w.-]+)\.\w+/)
   if (emailMatch) return emailMatch[1].split('.')[0]
 
