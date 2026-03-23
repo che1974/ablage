@@ -10,21 +10,54 @@ import type {
 
 // --- Field extraction ---
 
-const DATE_PATTERNS = [
-  /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/,
-  /(\d{4})-(\d{1,2})-(\d{1,2})/,
-  /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2})(?!\d)/,
+const MONTHS: Record<string, number> = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+  july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+}
+
+const DATE_PATTERNS: Array<{ re: RegExp; parse: (m: RegExpMatchArray) => [number, number, number] | null }> = [
+  // "February 23, 2026" or "Feb 23, 2026"
+  {
+    re: /(?:invoice\s*date|date\s*of\s*invoice|date)[:\s]*(\w+)\s+(\d{1,2}),?\s*(\d{4})/i,
+    parse: (m) => {
+      const month = MONTHS[m[1].toLowerCase()]
+      return month ? [Number(m[3]), month, Number(m[2])] : null
+    },
+  },
+  // "23 February 2026"
+  {
+    re: /(\d{1,2})\s+(\w+)\s+(\d{4})/,
+    parse: (m) => {
+      const month = MONTHS[m[2].toLowerCase()]
+      return month ? [Number(m[3]), month, Number(m[1])] : null
+    },
+  },
+  // YYYY-MM-DD
+  { re: /(\d{4})-(\d{1,2})-(\d{1,2})/, parse: (m) => [Number(m[1]), Number(m[2]), Number(m[3])] },
+  // DD.MM.YYYY or DD/MM/YYYY
+  {
+    re: /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/,
+    parse: (m) => {
+      const year = Number(m[3])
+      return [year, Number(m[2]), Number(m[1])]
+    },
+  },
+  // DD.MM.YY
+  {
+    re: /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2})(?!\d)/,
+    parse: (m) => [2000 + Number(m[3]), Number(m[2]), Number(m[1])],
+  },
 ]
 
 function extractDate(text: string, filename: string): string | undefined {
   for (const source of [text, filename]) {
-    for (const pattern of DATE_PATTERNS) {
-      const match = source.match(pattern)
+    for (const { re, parse } of DATE_PATTERNS) {
+      const match = source.match(re)
       if (!match) continue
-      const parts = match.slice(1).map(Number)
-      if (parts[0] > 1000) return formatDate(parts[0], parts[1], parts[2])
-      const year = parts[2] < 100 ? 2000 + parts[2] : parts[2]
-      return formatDate(year, parts[1], parts[0])
+      const result = parse(match)
+      if (!result) continue
+      return formatDate(result[0], result[1], result[2])
     }
   }
   return undefined
@@ -35,19 +68,26 @@ function formatDate(year: number, month: number, day: number): string {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
-const AMOUNT_PATTERN = /(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})\s*€/
+const AMOUNT_PATTERNS = [
+  /(?:total|amount|sum)[:\s]*[\$€]?\s*(\d[\d\s.,]*\d)\s*(?:€|\$|usd|eur)/i,
+  /(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})\s*(?:€|\$|usd|eur)/i,
+  /(?:€|\$)\s*(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})/i,
+]
 
 function extractAmount(text: string): string | undefined {
-  const match = text.match(AMOUNT_PATTERN)
-  return match ? `${match[1]} €` : undefined
+  for (const pattern of AMOUNT_PATTERNS) {
+    const match = text.match(pattern)
+    if (match) return match[1].trim()
+  }
+  return undefined
 }
 
 const SENDER_PATTERNS = [
-  /(?:von|from|absender)[:\s]+(.+)/i,
-  /^(.+?)(?:\n|$)/,
+  /(?:customer|payer|client|bill\s*to|billed\s*to|käufer|auftraggeber)[:\s/]*\n?\s*(.+)/i,
+  /(?:von|from|absender|supplier|vendor)[:\s]+(.+)/i,
 ]
 
-const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG)\s*/gi
+const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG|LLP|LLC)\s*/gi
 
 function extractSender(text: string): string | undefined {
   for (const pattern of SENDER_PATTERNS) {
@@ -58,9 +98,11 @@ function extractSender(text: string): string | undefined {
     }
   }
 
-  const companyMatch = text.match(/(\S+(?:\s+\S+){0,3})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc)/i)
+  // Try company suffix detection
+  const companyMatch = text.match(/(\S+(?:\s+\S+){0,3})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC)/i)
   if (companyMatch) return cleanSender(companyMatch[1])
 
+  // Try email domain
   const emailMatch = text.match(/@([\w.-]+)\.\w+/)
   if (emailMatch) return emailMatch[1].split('.')[0]
 
