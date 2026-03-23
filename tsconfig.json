@@ -6,6 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": ["node", "react", "react-dom"],
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx",
