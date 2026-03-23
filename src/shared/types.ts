@@ -107,7 +107,7 @@ export interface IpcApi {
   addRule: (rule: Omit<Rule, 'id'>) => Promise<void>
   deleteRule: (id: number) => Promise<void>
   checkConflicts: (ruleType: RuleType, pattern: string, excludeId?: number) => Promise<string[]>
-  onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => void
+  onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => () => void
   acceptSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   skipSuggestion: (suggestion: MoveSuggestion) => Promise<void>
   getSetting: (key: string) => Promise<string>

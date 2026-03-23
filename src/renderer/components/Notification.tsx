@@ -7,9 +7,10 @@ export default function NotificationPanel() {
   const [suggestions, setSuggestions] = useState<MoveSuggestion[]>([])
 
   useEffect(() => {
-    window.ablage.onSuggestion((suggestion) => {
+    const cleanup = window.ablage.onSuggestion((suggestion) => {
       setSuggestions((prev) => [...prev, suggestion])
     })
+    return cleanup
   }, [])
 
   const handleAccept = async (suggestion: MoveSuggestion) => {

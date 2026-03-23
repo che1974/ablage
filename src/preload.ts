@@ -19,7 +19,9 @@ const api: IpcApi = {
   checkConflicts: (ruleType: string, pattern: string, excludeId?: number) =>
     ipcRenderer.invoke('check-conflicts', ruleType, pattern, excludeId),
   onSuggestion: (callback: (suggestion: MoveSuggestion) => void) => {
-    ipcRenderer.on('new-suggestion', (_event, suggestion) => callback(suggestion))
+    const handler = (_event: any, suggestion: MoveSuggestion) => callback(suggestion)
+    ipcRenderer.on('new-suggestion', handler)
+    return () => { ipcRenderer.removeListener('new-suggestion', handler) }
   },
   acceptSuggestion: (suggestion: MoveSuggestion) =>
     ipcRenderer.invoke('accept-suggestion', suggestion),
