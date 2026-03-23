@@ -50,8 +50,8 @@ const DATE_PATTERNS: DatePattern[] = [
 ]
 
 function extractDate(text: string, filename: string): string | undefined {
-  // First: try to find a date near an "invoice date" / "date of invoice" label
-  const labelMatch = text.match(/(?:invoice\s*date|date\s*of\s*invoice|date\s*:)[^\n]*\n?\s*([^\n]+)/i)
+  // First: try to find a date near a date label (same line or next line)
+  const labelMatch = text.match(/(?:invoice\s*date|date\s*of\s*invoice|date\s*of\s*issue|date\s*:)\s*([^\n]*(?:\n[^\n]*)?)/i)
   if (labelMatch) {
     const nearby = labelMatch[1]
     for (const { re, parse } of DATE_PATTERNS) {
@@ -93,29 +93,35 @@ function extractAmount(text: string): string | undefined {
   return undefined
 }
 
-const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG|LLP|LLC)\s*/gi
+const COMPANY_SUFFIXES = /\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd\.?|Inc\.?|& Co\.?\s*KG|SE|OHG|KG|LLP|LLC|PBC)\s*/gi
+const COMPANY_SUFFIX_RE = /(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC|PBC)\b/i
 
 function extractSender(text: string): string | undefined {
-  // Strategy 1: find company name after "Customer/Payer/Client/Bill to" label
-  // Match the label line, skip everything until the next line with actual content
-  const labelPatterns = [
-    /(?:customer|payer|client|bill\s*to|billed\s*to)[^\n]*\n\s*([A-Z][\w\s.,&-]{2,40})/i,
-    /(?:from|von|absender|supplier|vendor)[:\s]+([A-Z][\w\s.,&-]{2,40})/i,
-  ]
-
-  for (const pattern of labelPatterns) {
-    const match = text.match(pattern)
-    if (match && match[1]) {
-      const sender = cleanSender(match[1].split('\n')[0])
+  // Strategy 1: find company by legal suffix on same line — most reliable
+  const lines = text.split('\n')
+  for (const line of lines) {
+    const companyMatch = line.match(/^([\w][\w\s&.,-]{1,30})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC|PBC)\b/i)
+    if (companyMatch) {
+      const sender = cleanSender(companyMatch[0])
       if (sender.length >= 2) return sender
     }
   }
 
-  // Strategy 2: find company by legal suffix (GmbH, LLP, LLC, Ltd, etc.)
-  const companyMatch = text.match(/([\w][\w\s&.-]{0,30})\s*(?:GmbH|AG|e\.?\s*V\.?|Ltd|Inc|LLP|LLC)\b/i)
-  if (companyMatch) return cleanSender(companyMatch[1])
+  // Strategy 2: find name after "from/supplier/vendor" label
+  const fromMatch = text.match(/(?:from|von|absender|supplier|vendor)[:\s]+([^\n]{2,40})/i)
+  if (fromMatch) {
+    const sender = cleanSender(fromMatch[1])
+    if (sender.length >= 2) return sender
+  }
 
-  // Strategy 3: email domain
+  // Strategy 3: find name after "customer/payer" label (next line)
+  const payerMatch = text.match(/(?:customer|payer|client)[^\n]*\n\s*([^\n]{2,40})/i)
+  if (payerMatch) {
+    const sender = cleanSender(payerMatch[1])
+    if (sender.length >= 2 && !COMPANY_SUFFIX_RE.test(sender)) return sender
+  }
+
+  // Strategy 4: email domain
   const emailMatch = text.match(/@([\w.-]+)\.\w+/)
   if (emailMatch) return emailMatch[1].split('.')[0]
 
